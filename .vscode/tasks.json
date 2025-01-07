@@ -1,0 +1,54 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Build NPM Frontend",
+        "type": "shell",
+        "command": "npm run build",
+        "options": {
+          "cwd": "./hotel_reservation_frontend"
+        },
+        "problemMatcher": [],
+        "detail": "Builds the frontend using npm from the frontend directory"
+      },
+      {
+        "label": "Run NPM Frontend Dev Mode",
+        "type": "shell",
+        "command": "npm run dev",
+        "options": {
+          "cwd": "./hotel_reservation_frontend"
+        },
+        "problemMatcher": [],
+        "detail": "Builds and run the frontend using npm from the frontend directory"
+      },
+      {
+        "label": "Run Go Backend",
+        "type": "shell",
+        "command": "go run .",
+        "options": {
+          "cwd": "./server/cmd"
+        },
+        "problemMatcher": [],
+        "detail": "Runs the Go backend from the backend directory"
+      },
+      {
+        "label": "Build and Run All",
+        "dependsOn": [
+          "Build NPM Frontend",
+          "Run Go Backend"
+        ],
+        "problemMatcher": [],
+        "detail": "Builds the NPM frontend and runs the Go backend sequentially"
+      },
+      {
+        "label": "Run dev",
+        "dependsOn": [
+          "Run NPM Frontend Dev Mode",
+          "Run Go Backend"
+        ],
+        "problemMatcher": [],
+        "detail": "Runs the NPM frontend and runs the Go backend sequentially"
+      },
+    ]
+}
+  
