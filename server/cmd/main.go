@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/antonlindstrom/pgstore"
 	_ "github.com/lib/pq"
 )
 
@@ -35,6 +36,12 @@ func main() {
 	}
 
 	createTables(db)
+
+	//set up session store
+	store, err := pgstore.NewPGStore(dbConnStr, []byte("super-secret-key"))
+	if err != nil {
+		log.Fatalf("Failed to initialize session store: %v", err)
+	}
 	//set up the server
 	mux := http.NewServeMux()
 
@@ -58,6 +65,7 @@ func main() {
 
 	//authentication routes
 	mux.HandleFunc("POST /api/user/register", auth.RegisterUser(db))
+	mux.HandleFunc("POST /api/user/login", auth.LoginUser(db, store))
 	//reservation routes
 	mux.HandleFunc("/api/reservation/search", reservation.SearchRoom(db))
 	mux.HandleFunc("/api/reservation/confirm", reservation.ConfirmReservation(db))
@@ -131,10 +139,10 @@ func createReservationTable(db *sql.DB) {
 
 func createRoomTable(db *sql.DB) {
 	query := `CREATE TABLE IF NOT EXISTS "Rooms" (
-    	room_number INT PRIMARY KEY,
-    	room_type VARCHAR(10) NOT NULL CHECK (room_type IN ('single', 'deluxe', 'suite')),
+    	roomNumber INT PRIMARY KEY,
+    	roomType VARCHAR(10) NOT NULL CHECK (roomType IN ('single', 'deluxe', 'suite')),
     	capacity INT NOT NULL,
-    	max_ppn INT NOT NULL,
+    	maxPPN INT NOT NULL,
     	latest_checkout TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	);
 	`
