@@ -2,6 +2,8 @@ package main
 
 import (
 	"database/sql"
+	"hotel_reservation/auth"
+	"hotel_reservation/reservation"
 	"log"
 	"net/http"
 	"os"
@@ -49,8 +51,20 @@ func main() {
 		// If the file doesn't exist, serve index.html
 		http.ServeFile(w, r, filepath.Join(staticDir, "index.html"))
 	})
+
+	//test routes
 	mux.HandleFunc("/api/message/get", getMessage)
 	mux.HandleFunc("POST /api/message/post", postMessage)
+
+	//authentication routes
+	mux.HandleFunc("POST /api/user/register", auth.RegisterUser(db))
+	//reservation routes
+	mux.HandleFunc("/api/reservation/search", reservation.SearchRoom(db))
+	mux.HandleFunc("/api/reservation/confirm", reservation.ConfirmReservation(db))
+
+	//check-in routes
+
+	//check-out routes
 
 	// Start the server
 	port := "8080"
@@ -62,14 +76,17 @@ func main() {
 func createTables(db *sql.DB) {
 	createUserTable(db)
 	createStaffTable(db)
+	createReservationTable(db)
+	createRoomTable(db)
 }
 func createUserTable(db *sql.DB) {
 	query := `CREATE TABLE IF NOT EXISTS "Users"(
 		id SERIAL PRIMARY KEY,
-		email VARCHAR(100) NOT NULL,
+		email VARCHAR(100) NOT NULL UNIQUE,
+		username VARCHAR(100) NOT NULL,
 		hashedPassword VARCHAR(100) NOT NULL,
 		created timestamp DEFAULT NOW()
- 	)
+ 	);
 	`
 	_, err := db.Exec(query)
 
@@ -84,7 +101,7 @@ func createStaffTable(db *sql.DB) {
 		email VARCHAR(100) NOT NULL,
 		hashedPassword VARCHAR(100) NOT NULL,
 		created timestamp DEFAULT NOW()
- 	)
+ 	);
 	`
 	_, err := db.Exec(query)
 
@@ -96,14 +113,14 @@ func createStaffTable(db *sql.DB) {
 func createReservationTable(db *sql.DB) {
 	query := `
 	CREATE TABLE IF NOT EXISTS "Reservations" (
-		reservationNumber SERIAL PRIMARY KEY,
+		reservationNumber VARCHAR(8) PRIMARY KEY,
 		dateOfReservation TIMESTAMP DEFAULT NOW(),
-		dateOfCheckIn TIMESTAMP,
-		expectedDateOfCheckOut TIMESTAMP,
-		price INT,
-		status INT,
-		methodOfPayment INT
-	)
+		dateOfCheckIn TIMESTAMP NOT NULL,
+		expectedDateOfCheckOut TIMESTAMP NOT NULL,
+		price INT NOT NULL,
+		status INT NOT NULL,
+		methodOfPayment INT NOT NULL
+	);
 	`
 	_, err := db.Exec(query)
 
@@ -113,12 +130,13 @@ func createReservationTable(db *sql.DB) {
 }
 
 func createRoomTable(db *sql.DB) {
-	query := `CREATE TABLE IF NOT EXISTS "Staff"(
-		id SERIAL PRIMARY KEY,
-		email VARCHAR(100) NOT NULL,
-		hashedPassword VARCHAR(100) NOT NULL,
-		created timestamp DEFAULT NOW()
- 	)
+	query := `CREATE TABLE IF NOT EXISTS "Rooms" (
+    	room_number INT PRIMARY KEY,
+    	room_type VARCHAR(10) NOT NULL CHECK (room_type IN ('single', 'deluxe', 'suite')),
+    	capacity INT NOT NULL,
+    	max_ppn INT NOT NULL,
+    	latest_checkout TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);
 	`
 	_, err := db.Exec(query)
 
