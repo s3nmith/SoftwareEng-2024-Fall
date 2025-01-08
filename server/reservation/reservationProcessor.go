@@ -3,33 +3,44 @@ package reservation
 import (
 	"database/sql"
 	"encoding/json"
+	"hotel_reservation/auth"
 	"hotel_reservation/room"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/antonlindstrom/pgstore"
 )
 
-func SearchRoom(db *sql.DB) http.HandlerFunc {
+func SearchRoom(db *sql.DB, store *pgstore.PGStore) http.HandlerFunc {
 	//use body of request sent from frontend to extract user requirements into a room struct
 	//query database for rooms satisfying the requirements
 	//return json with data if there are matching rooms
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !auth.IsAuthorized(store, r) {
+			http.Error(w, `{"error":"Please login to reserve rooms."}`, http.StatusUnauthorized)
+			w.Header().Set("Content-Type", "application/json")
+			return
+		}
 		var requiredRoom room.RoomCriteria
 
 		err := json.NewDecoder(r.Body).Decode(&requiredRoom)
 		if err != nil {
-			http.Error(w, "Invalid request payload", http.StatusBadRequest)
+			http.Error(w, `{"error":"Invalid request."}`, http.StatusInternalServerError)
+			w.Header().Set("Content-Type", "application/json")
 			return
 		}
 		query := `
-			SELECT room_number, room_type, capacity, max_ppn, latest_checkout
+			SELECT roomNumber, roomType, capacity, maxPPN, latestCheckout
 			FROM "Rooms"
-			WHERE room_type=$1 AND capacity >= $2 AND max_ppn <= $3 AND latest_checkout<$4`
-		checkInTime, err := time.Parse(time.RFC3339, requiredRoom.CheckInDate)
+			WHERE roomType=$1 AND capacity >= $2 AND maxPPN <= $3 AND latestCheckout<$4`
+
+		format := "2006-01-02"
+		checkInDate, err := time.Parse(format, requiredRoom.CheckInDate)
 		if err != nil {
 			log.Fatal("Error parsing time:", err)
 		}
-		rows, err := db.Query(query, requiredRoom.RoomType, requiredRoom.Capacity, requiredRoom.MaxPPN, checkInTime)
+		rows, err := db.Query(query, requiredRoom.RoomType, requiredRoom.Capacity, requiredRoom.MaxPPN, checkInDate)
 		if err != nil {
 			http.Error(w, `{"error":"Failed to query database."}`, http.StatusInternalServerError)
 			w.Header().Set("Content-Type", "application/json")

@@ -67,7 +67,7 @@ func main() {
 	mux.HandleFunc("POST /api/user/register", auth.RegisterUser(db))
 	mux.HandleFunc("POST /api/user/login", auth.LoginUser(db, store))
 	//reservation routes
-	mux.HandleFunc("/api/reservation/search", reservation.SearchRoom(db))
+	mux.HandleFunc("/api/reservation/search", reservation.SearchRoom(db, store))
 	mux.HandleFunc("/api/reservation/confirm", reservation.ConfirmReservation(db))
 
 	//check-in routes
@@ -123,8 +123,8 @@ func createReservationTable(db *sql.DB) {
 	CREATE TABLE IF NOT EXISTS "Reservations" (
 		reservationNumber VARCHAR(8) PRIMARY KEY,
 		dateOfReservation TIMESTAMP DEFAULT NOW(),
-		dateOfCheckIn TIMESTAMP NOT NULL,
-		expectedDateOfCheckOut TIMESTAMP NOT NULL,
+		dateOfCheckIn DATE NOT NULL,
+		expectedDateOfCheckOut DATE NOT NULL,
 		price INT NOT NULL,
 		status INT NOT NULL,
 		methodOfPayment INT NOT NULL
@@ -143,7 +143,7 @@ func createRoomTable(db *sql.DB) {
     	roomType VARCHAR(10) NOT NULL CHECK (roomType IN ('single', 'deluxe', 'suite')),
     	capacity INT NOT NULL,
     	maxPPN INT NOT NULL,
-    	latest_checkout TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    	latestCheckout DATE NOT NULL DEFAULT CURRENT_TIMESTAMP
 	);
 	`
 	_, err := db.Exec(query)
