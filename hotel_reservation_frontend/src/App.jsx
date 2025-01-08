@@ -1,47 +1,42 @@
-import { useState, useEffect } from "react";
+import { useRef } from 'react';
+import Navbar from './components/Navbar';
+import Hero from './components/Hero';
+import Rooms from './components/Rooms';
+import Dining from './components/Dining';
+import About from './components/About';
+import Contact from './components/Contact';
+import Footer from './components/Footer';
 
-function App() {
-  const [message, setMessage] = useState("");
-  const [newMessage, setNewMessage] = useState("");
-  const [response, setResponse] = useState("");
-
-  // Fetch data from the Go API
-  useEffect(() => {
-    fetch("/api/message/get")
-      .then((res) => res.json())
-      .then((data) => setMessage(data.text))
-      .catch((err) => console.error(err));
-  }, []);
-
-  // Send data to the Go API
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    fetch("/api/message/post", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: newMessage }),
-    })
-      .then((res) => res.json())
-      .then((data) => setResponse(data.text))
-      .catch((err) => console.error(err));
-  };
+const App = () => {
+  const roomsRef = useRef(null);
+  const diningRef = useRef(null);
+  const aboutRef = useRef(null);
+  const contactRef = useRef(null);
 
   return (
-    <div>
-      <h1>React-Go API Example</h1>
-      <p>Message from Go: {message}</p>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="Send a message"
-        />
-        <button type="submit">Send</button>
-      </form>
-      {response && <p>Response from Go: {response}</p>}
+    <div className="app">
+      <Navbar
+        roomsRef={roomsRef}
+        diningRef={diningRef}
+        aboutRef={aboutRef}
+        contactRef={contactRef}
+      />
+      <Hero />
+      <div ref={roomsRef}>
+        <Rooms />
+      </div>
+      <div ref={diningRef}>
+        <Dining />
+      </div>
+      <div ref={aboutRef}>
+        <About />
+      </div>
+      <div ref={contactRef}>
+        <Contact />
+      </div>
+      <Footer />
     </div>
   );
-}
+};
 
 export default App;

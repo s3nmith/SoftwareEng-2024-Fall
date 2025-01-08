@@ -1,0 +1,55 @@
+.navbar {
+	background-color: #ffffff; 
+	color: #333; 
+	padding: 15px 0;
+	position: sticky;
+	top: 0;
+	z-index: 1000;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 20px;
+  }
+  
+  .hotel-logo {
+	height: 50px;
+  }
+  
+  .nav-links {
+	display: flex;
+	gap: 20px;
+	list-style: none;
+  }
+  
+  .nav-links button {
+	background: none;
+	border: none;
+	color: #333; 
+	font-size: 1rem;
+	font-weight: bold;
+	cursor: pointer;
+  }
+  
+  .nav-links button:hover {
+	color: #1f95c8;
+	text-decoration: underline;
+  }  
+  
+  .nav-links a {
+	color: #333; 
+	text-decoration: none;
+	font-size: 1rem;
+	font-weight: bold;
+  }
+  
+  .nav-links a:hover {
+	color: #1f95c8;
+	text-decoration: underline;
+  }
+  
