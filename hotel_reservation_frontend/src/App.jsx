@@ -9,7 +9,8 @@ import About from './components/About';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import Login from './components/Login';
-import MyPage from './components/MyPage'; // Import MyPage
+import MyPage from './components/MyPage';
+import Reserve from './components/Reserve';
 
 const App = () => {
   const roomsRef = useRef(null);
@@ -47,7 +48,8 @@ const App = () => {
           }
         />
         <Route path="/login" element={<Login />} />
-        <Route path="/mypage" element={<MyPage />} /> {/* Add route for MyPage */}
+        <Route path="/mypage" element={<MyPage />} />
+        <Route path="/reserve" element={<Reserve />} />
       </Routes>
       <Footer />
     </Router>
@@ -57,7 +59,7 @@ const App = () => {
 const ConditionalNavbar = ({ roomsRef, diningRef, aboutRef, contactRef }) => {
   const location = useLocation();
 
-  if ((location.pathname === '/login') || (location.pathname === '/mypage')) {
+  if ((location.pathname === '/login') || (location.pathname === '/mypage') || (location.pathname === '/reserve')) {
     return null;
   }
 

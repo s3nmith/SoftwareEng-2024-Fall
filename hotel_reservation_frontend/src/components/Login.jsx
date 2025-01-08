@@ -5,16 +5,39 @@ import NavbarMinimal from './NavbarMinimal';
 
 const Login = () => {
   const [openSection, setOpenSection] = useState('login'); 
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleLoginSubmit = (e) => {
+  const handleRegisterSubmit = async (e) => {
     e.preventDefault();
-    navigate('/mypage'); 
-  };
+    setError('');
 
-  const handleRegisterSubmit = (e) => {
-    e.preventDefault();
-    navigate('/mypage'); 
+    const formData = new FormData(e.target);
+    const user = {
+      email: formData.get('email'),
+      password: formData.get('password'),
+      username: formData.get('full-name'),
+    };
+
+    try {
+      const response = await fetch('/api/user/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(user),
+      });
+
+      const data = await response.json();
+
+      if (response.status === 200) {
+        localStorage.setItem('user_id', data.user_id);
+        navigate('/mypage');
+      } else {
+        setError(data.error || 'Failed to register. Please try again.');
+      }
+    } catch (error) {
+		console.error('Registration error:', error);
+		setError('An unexpected error occurred. Please try again.');
+	  }
   };
 
   const toggleSection = (section) => {
@@ -23,9 +46,11 @@ const Login = () => {
 
   return (
     <div className="login-page">
-       <NavbarMinimal />
+      <NavbarMinimal />
       <div className="login-content">
         <h1>Login / Registration</h1>
+
+        {error && <p className="error-message">{error}</p>}
 
         <div className="collapsible-box">
           <div className="box-header" onClick={() => toggleSection('login')}>
@@ -38,7 +63,7 @@ const Login = () => {
             }`}
           >
             <div className="login-box">
-              <form onSubmit={handleLoginSubmit}>
+              <form onSubmit={(e) => e.preventDefault()}>
                 <label htmlFor="email">E-mail Address</label>
                 <input type="email" id="email" placeholder="email@mail.com" required />
                 <label htmlFor="password">Password</label>
@@ -62,13 +87,13 @@ const Login = () => {
             <div className="login-box">
               <form onSubmit={handleRegisterSubmit}>
                 <label htmlFor="full-name">Full Name</label>
-                <input type="text" id="full-name" placeholder="Your Name" required />
+                <input type="text" name="full-name" placeholder="Your Name" required />
                 <label htmlFor="email">E-mail Address</label>
-                <input type="email" id="email" placeholder="email@mail.com" required />
+                <input type="email" name="email" placeholder="email@mail.com" required />
                 <label htmlFor="password">Password</label>
-                <input type="password" id="password" placeholder="******" required />
+                <input type="password" name="password" placeholder="******" required />
                 <label htmlFor="confirm-password">Confirm Password</label>
-                <input type="password" id="confirm-password" placeholder="******" required />
+                <input type="password" name="confirm-password" placeholder="******" required />
                 <button type="submit" className="login-button">Register</button>
               </form>
             </div>
