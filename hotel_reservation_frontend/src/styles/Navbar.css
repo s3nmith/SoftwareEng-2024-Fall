@@ -8,17 +8,31 @@
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
   
-  .container {
+  .navbar-container {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	max-width: 1200px;
 	margin: 0 auto;
 	padding: 0 20px;
+	gap: 40px;
+  }
+  
+  .navbar-logo {
+	flex: 1;
+	display: flex;
+	justify-content: flex-start;
   }
   
   .hotel-logo {
 	height: 50px;
+	width: auto; 
+  }
+  
+  .navbar-links {
+	flex: 2;
+	display: flex;
+	justify-content: center; 
   }
   
   .nav-links {
@@ -39,17 +53,36 @@
   .nav-links button:hover {
 	color: #1f95c8;
 	text-decoration: underline;
-  }  
+  }
   
-  .nav-links a {
-	color: #333; 
-	text-decoration: none;
-	font-size: 1rem;
+.navbar-buttons {
+	flex: 1;
+	display: flex;
+	justify-content: flex-end; 
+	gap: 15px;
+}
+
+.navbar-btn {
+	background-color: #1f95c8;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	font-size: 0.9rem;
 	font-weight: bold;
-  }
-  
-  .nav-links a:hover {
-	color: #1f95c8;
-	text-decoration: underline;
-  }
-  
+	border-radius: 5px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	transition: background-color 0.3s ease;
+	text-decoration: none;
+	font-family: Arial, sans-serif;
+}
+
+.navbar-btn:hover {
+	background-color: #146b8a;
+}
+
+.navbar-btn .icon {
+	font-size: 1rem; 
+}

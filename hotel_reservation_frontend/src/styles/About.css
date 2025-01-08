@@ -7,14 +7,47 @@
   .about h2 {
 	font-size: 2.5rem;
 	color: #333;
-	margin-bottom: 20px;
+	margin-bottom: 40px;
   }
   
-  .about p {
-	font-size: 1.2rem;
-	max-width: 800px;
+  .about-content {
+	max-width: 1200px;
 	margin: 0 auto;
-	line-height: 1.8;
+  }
+  
+  .about-section {
+	display: flex;
+	align-items: center;
+	gap: 30px;
+	margin-bottom: 40px;
+  }
+  
+  .about-section.reverse {
+	flex-direction: row-reverse;
+  }
+  
+  .about-image {
+	flex: 1;
+	max-width: 50%;
+	height: auto;
+	border-radius: 10px;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .about-text {
+	flex: 1;
+	text-align: left;
+  }
+  
+  .about-text h3 {
+	font-size: 1.8rem;
 	color: #333;
+	margin-bottom: 10px;
+  }
+  
+  .about-text p {
+	font-size: 1.2rem;
+	line-height: 1.8;
+	color: #555;
   }
   
