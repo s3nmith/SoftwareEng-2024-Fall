@@ -31,7 +31,7 @@ const Hero = () => {
       <div className="hero-content">
         <h2>Welcome to Paradise</h2>
         <p>Relax, unwind, and experience the beauty of island life.</p>
-        <Link to="/login" className="cta-button">
+        <Link to="/reserve" className="cta-button">
           Book Your Escape
         </Link>
       </div>

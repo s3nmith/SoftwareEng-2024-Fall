@@ -4,7 +4,7 @@ import { FaUser, FaCalendarAlt } from 'react-icons/fa';
 import '../styles/Navbar.css';
 import hotelLogo from '../assets/hotel-logo.png';
 
-const Navbar = ({ roomsRef, diningRef, aboutRef, contactRef }) => {
+const Navbar = ({ heroRef, roomsRef, diningRef, aboutRef, contactRef }) => {
   const handleScroll = (ref) => {
     ref.current.scrollIntoView({ behavior: 'smooth' });
   };
@@ -12,9 +12,9 @@ const Navbar = ({ roomsRef, diningRef, aboutRef, contactRef }) => {
   return (
     <header className="navbar">
       <div className="navbar-container">
-        <div className="navbar-logo">
+        <Link onClick={() => handleScroll(heroRef)} className="navbar-logo">
           <img src={hotelLogo} alt="Hotel Logo" className="hotel-logo" />
-        </div>
+        </Link>
         <nav className="navbar-links">
           <ul className="nav-links">
             <li><button onClick={() => handleScroll(roomsRef)}>Rooms</button></li>
@@ -28,10 +28,10 @@ const Navbar = ({ roomsRef, diningRef, aboutRef, contactRef }) => {
             <FaUser className="icon" />
             Login
           </Link>
-          <button className="navbar-btn reserve-btn">
+          <Link to="/reserve" className="navbar-btn reserve-btn">
             <FaCalendarAlt className="icon" />
             Reserve
-          </button>
+          </Link>
         </div>
       </div>
     </header>
@@ -39,6 +39,7 @@ const Navbar = ({ roomsRef, diningRef, aboutRef, contactRef }) => {
 };
 
 Navbar.propTypes = {
+  heroRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }).isRequired,
   roomsRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }).isRequired,
   diningRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }).isRequired,
   aboutRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }).isRequired,
