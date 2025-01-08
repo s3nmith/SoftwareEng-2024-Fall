@@ -38,6 +38,29 @@ const Login = () => {
     }
   };
 
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+  
+    try {
+      // Create a FormData object from the form
+      const formData = new FormData(e.target);
+  
+      // Make the fetch request with FormData
+      const response = await fetch('/api/user/login', {
+        method: 'POST',
+        body: formData, // FormData handles encoding as multipart/form-data
+      });
+  
+      const data = await response.json();
+
+      setError(data.error || 'Failed to register. Please try again.');
+    } catch (error) {
+      console.error('Registration error:', error);
+      setError('An unexpected error occurred. Please try again.');
+    }
+  };
+
   const toggleSection = (section) => {
     setOpenSection(openSection === section ? null : section); 
   };
@@ -61,7 +84,7 @@ const Login = () => {
             }`}
           >
             <div className="login-box">
-              <form onSubmit={(e) => e.preventDefault()}>
+              <form onSubmit={handleLoginSubmit}>
                 <label htmlFor="email">E-mail Address</label>
                 <input type="email" id="email" placeholder="email@mail.com" required />
                 <label htmlFor="password">Password</label>
