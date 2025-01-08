@@ -1,11 +1,11 @@
 package room
 
 type Room struct {
-	RoomType    int
-	RoomNumber  int
-	Capacity    int
-	MaxPPN      int
-	IsAvailable bool
+	RoomNumber         int    `json:"room_number"`
+	RoomType           string `json:"room_type"`
+	Capacity           int    `json:"capacity"`
+	PPN                int    `json:"ppn"`
+	LatestCheckOutDate string `json:"-"`
 }
 
 func (r *Room) newRoom() {
@@ -13,6 +13,17 @@ func (r *Room) newRoom() {
 }
 
 // corresponds to update room availability
-func (r *Room) updateAvailability(isAvaiable bool) {
-	r.IsAvailable = isAvaiable
+func (r *Room) updateAvailability(isAvailable bool) {
+}
+
+// communiction specific structs
+type AvailableRooms struct {
+	Rooms []Room `json:"rooms"`
+}
+
+type RoomCriteria struct {
+	RoomType    string `json:"room_type"`
+	Capacity    int    `json:"capacity"`
+	MaxPPN      int    `json:"max_ppn"`
+	CheckInDate string `json:"checkIn_date"`
 }
