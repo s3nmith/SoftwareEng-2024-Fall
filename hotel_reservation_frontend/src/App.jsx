@@ -1,47 +1,81 @@
-import { useState, useEffect } from "react";
+import { useRef } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import Navbar from './components/Navbar';
+import Hero from './components/Hero';
+import Rooms from './components/Rooms';
+import Dining from './components/Dining';
+import About from './components/About';
+import Contact from './components/Contact';
+import Footer from './components/Footer';
+import Login from './components/Login';
 
-function App() {
-  const [message, setMessage] = useState("");
-  const [newMessage, setNewMessage] = useState("");
-  const [response, setResponse] = useState("");
-
-  // Fetch data from the Go API
-  useEffect(() => {
-    fetch("/api/message/get")
-      .then((res) => res.json())
-      .then((data) => setMessage(data.text))
-      .catch((err) => console.error(err));
-  }, []);
-
-  // Send data to the Go API
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    fetch("/api/message/post", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: newMessage }),
-    })
-      .then((res) => res.json())
-      .then((data) => setResponse(data.text))
-      .catch((err) => console.error(err));
-  };
+const App = () => {
+  const roomsRef = useRef(null);
+  const diningRef = useRef(null);
+  const aboutRef = useRef(null);
+  const contactRef = useRef(null);
 
   return (
-    <div>
-      <h1>React-Go API Example</h1>
-      <p>Message from Go: {message}</p>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="Send a message"
+    <Router>
+      <ConditionalNavbar
+        roomsRef={roomsRef}
+        diningRef={diningRef}
+        aboutRef={aboutRef}
+        contactRef={contactRef}
+      />
+      <Routes>
+        
+        <Route
+          path="/"
+          element={
+            <>
+              <Hero />
+              <div ref={roomsRef}>
+                <Rooms />
+              </div>
+              <div ref={diningRef}>
+                <Dining />
+              </div>
+              <div ref={aboutRef}>
+                <About />
+              </div>
+              <div ref={contactRef}>
+                <Contact />
+              </div>
+              <Footer />
+            </>
+          }
         />
-        <button type="submit">Send</button>
-      </form>
-      {response && <p>Response from Go: {response}</p>}
-    </div>
+
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </Router>
   );
-}
+};
+
+const ConditionalNavbar = ({ roomsRef, diningRef, aboutRef, contactRef }) => {
+  const location = useLocation();
+
+  if (location.pathname === '/login') {
+    return null;
+  }
+
+  return (
+    <Navbar
+      roomsRef={roomsRef}
+      diningRef={diningRef}
+      aboutRef={aboutRef}
+      contactRef={contactRef}
+    />
+  );
+};
+
+ConditionalNavbar.propTypes = {
+  roomsRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }).isRequired,
+  diningRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }).isRequired,
+  aboutRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }).isRequired,
+  contactRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }).isRequired,
+};
 
 export default App;
