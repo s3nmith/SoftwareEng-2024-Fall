@@ -11,33 +11,31 @@ const Login = () => {
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
-    const formData = new FormData(e.target);
-    const user = {
-      email: formData.get('email'),
-      password: formData.get('password'),
-      username: formData.get('full-name'),
-    };
-
+  
     try {
+      // Create a FormData object from the form
+      const formData = new FormData(e.target);
+  
+      // Make the fetch request with FormData
       const response = await fetch('/api/user/register', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(user),
+        body: formData, // FormData handles encoding as multipart/form-data
       });
-
+  
       const data = await response.json();
-
-      if (response.status === 200) {
+  
+      if (response.ok) {
+        // Save the user ID in local storage and navigate to the mypage
         localStorage.setItem('user_id', data.user_id);
         navigate('/mypage');
       } else {
+        // Handle errors returned by the API
         setError(data.error || 'Failed to register. Please try again.');
       }
     } catch (error) {
-		console.error('Registration error:', error);
-		setError('An unexpected error occurred. Please try again.');
-	  }
+      console.error('Registration error:', error);
+      setError('An unexpected error occurred. Please try again.');
+    }
   };
 
   const toggleSection = (section) => {
@@ -86,8 +84,8 @@ const Login = () => {
           >
             <div className="login-box">
               <form onSubmit={handleRegisterSubmit}>
-                <label htmlFor="full-name">Full Name</label>
-                <input type="text" name="full-name" placeholder="Your Name" required />
+                <label htmlFor="username">Full Name</label>
+                <input type="text" name="username" placeholder="Your Name" required />
                 <label htmlFor="email">E-mail Address</label>
                 <input type="email" name="email" placeholder="email@mail.com" required />
                 <label htmlFor="password">Password</label>
