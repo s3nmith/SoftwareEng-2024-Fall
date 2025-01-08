@@ -85,5 +85,6 @@ func ConfirmReservation(db *sql.DB) http.HandlerFunc {
 	//insert reservation into database with the provided info
 	//change availability of rooms
 	return func(w http.ResponseWriter, r *http.Request) {
+		
 	}
 }
