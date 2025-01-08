@@ -11,6 +11,7 @@ import Footer from './components/Footer';
 import Login from './components/Login';
 import MyPage from './components/MyPage';
 import Reserve from './components/Reserve';
+import { UserProvider } from './context/UserContext';
 
 const App = () => {
   const roomsRef = useRef(null);
@@ -19,40 +20,42 @@ const App = () => {
   const contactRef = useRef(null);
 
   return (
-    <Router>
-      <ConditionalNavbar
-        roomsRef={roomsRef}
-        diningRef={diningRef}
-        aboutRef={aboutRef}
-        contactRef={contactRef}
-      />
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <>
-              <Hero />
-              <div ref={roomsRef}>
-                <Rooms />
-              </div>
-              <div ref={diningRef}>
-                <Dining />
-              </div>
-              <div ref={aboutRef}>
-                <About />
-              </div>
-              <div ref={contactRef}>
-                <Contact />
-              </div>
-            </>
-          }
+    <UserProvider>
+      <Router>
+        <ConditionalNavbar
+          roomsRef={roomsRef}
+          diningRef={diningRef}
+          aboutRef={aboutRef}
+          contactRef={contactRef}
         />
-        <Route path="/login" element={<Login />} />
-        <Route path="/mypage" element={<MyPage />} />
-        <Route path="/reserve" element={<Reserve />} />
-      </Routes>
-      <Footer />
-    </Router>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <Hero />
+                <div ref={roomsRef}>
+                  <Rooms />
+                </div>
+                <div ref={diningRef}>
+                  <Dining />
+                </div>
+                <div ref={aboutRef}>
+                  <About />
+                </div>
+                <div ref={contactRef}>
+                  <Contact />
+                </div>
+              </>
+            }
+          />
+          <Route path="/login" element={<Login />} />
+          <Route path="/mypage" element={<MyPage />} />
+          <Route path="/reserve" element={<Reserve />} />
+        </Routes>
+        <Footer />
+      </Router>
+    </UserProvider>
   );
 };
 
