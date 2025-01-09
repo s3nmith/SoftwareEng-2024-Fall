@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"hotel_reservation/auth"
 	"hotel_reservation/reservation"
 	"log"
@@ -35,7 +36,7 @@ func main() {
 		log.Println("Connected to database...")
 	}
 
-	createTables(db)
+	createTables(db, false)
 
 	//set up session store
 	store, err := pgstore.NewPGStore(dbConnStr, []byte("super-secret-key"))
@@ -68,7 +69,7 @@ func main() {
 	mux.HandleFunc("POST /api/user/login", auth.LoginUser(db, store))
 	//reservation routes
 	mux.HandleFunc("/api/reservation/search", reservation.SearchRoom(db, store))
-	mux.HandleFunc("/api/reservation/confirm", reservation.ConfirmReservation(db))
+	mux.HandleFunc("/api/reservation/confirm", reservation.ConfirmReservation(db, store))
 
 	//check-in routes
 
@@ -81,11 +82,55 @@ func main() {
 		log.Fatalf("Failed to start server: %v", err)
 	}
 }
-func createTables(db *sql.DB) {
+func createTables(db *sql.DB, refresh bool) {
+	if refresh {
+		dropAllTables(db)
+	}
 	createUserTable(db)
 	createStaffTable(db)
 	createReservationTable(db)
 	createRoomTable(db)
+	createRoomReservationTable(db)
+}
+
+func dropAllTables(db *sql.DB) {
+	// Query to fetch all table names
+	query := `
+		SELECT table_name
+		FROM information_schema.tables
+		WHERE table_schema = 'public' AND table_type = 'BASE TABLE';`
+	rows, err := db.Query(query)
+	if err != nil {
+		log.Fatalf("Failed to fetch table names: %v", err)
+	}
+	defer rows.Close()
+
+	// Collect all table names
+	var tables []string
+	for rows.Next() {
+		var tableName string
+		if err := rows.Scan(&tableName); err != nil {
+			log.Fatalf("Failed to scan table name: %v", err)
+		}
+		tables = append(tables, tableName)
+	}
+
+	// Drop all tables
+	for _, table := range tables {
+		stmt := fmt.Sprintf(`DROP TABLE IF EXISTS "%s" CASCADE;`, table)
+		_, err := db.Exec(stmt)
+		if err != nil {
+			log.Printf("Error dropping table %s: %v", table, err)
+		} else {
+			fmt.Printf("Dropped table: %s\n", table)
+		}
+	}
+
+	if len(tables) == 0 {
+		fmt.Println("No tables found to drop.")
+	} else {
+		fmt.Println("All tables dropped successfully.")
+	}
 }
 func createUserTable(db *sql.DB) {
 	query := `CREATE TABLE IF NOT EXISTS "Users"(
@@ -126,8 +171,8 @@ func createReservationTable(db *sql.DB) {
 		dateOfCheckIn DATE NOT NULL,
 		expectedDateOfCheckOut DATE NOT NULL,
 		price INT NOT NULL,
-		status INT NOT NULL,
-		methodOfPayment INT NOT NULL
+		status VARCHAR(11) NOT NULL CHECK (status IN ('completed', 'in_progress')),
+		methodOfPayment VARCHAR(9) NOT NULL CHECK (methodOfPayment IN ('in_person', 'online'))
 	);
 	`
 	_, err := db.Exec(query)
@@ -142,8 +187,8 @@ func createRoomTable(db *sql.DB) {
     	roomNumber INT PRIMARY KEY,
     	roomType VARCHAR(10) NOT NULL CHECK (roomType IN ('single', 'deluxe', 'suite')),
     	capacity INT NOT NULL,
-    	maxPPN INT NOT NULL,
-    	latestCheckout DATE NOT NULL DEFAULT CURRENT_TIMESTAMP
+    	PPN INT NOT NULL,
+		isReserved BOOLEAN NOT NULL
 	);
 	`
 	_, err := db.Exec(query)
@@ -152,4 +197,19 @@ func createRoomTable(db *sql.DB) {
 		panic(err)
 	}
 
+}
+
+// junction tables
+func createRoomReservationTable(db *sql.DB) {
+	query := `CREATE TABLE IF NOT EXISTS "RoomReservations" (
+		roomNumber INT NOT NULL REFERENCES "Rooms"(roomNumber) ON DELETE CASCADE,
+		reservationNumber VARCHAR(8) NOT NULL REFERENCES "Reservations"(reservationNumber) ON DELETE CASCADE,
+		PRIMARY KEY (roomNumber, reservationNumber)
+	);
+	`
+	_, err := db.Exec(query)
+
+	if err != nil {
+		panic(err)
+	}
 }
