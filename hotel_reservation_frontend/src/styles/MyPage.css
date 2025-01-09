@@ -100,3 +100,10 @@
 	background-color: #c0392b;
   }
   
+  .user-id {
+	text-align: center;
+	font-size: 1.2rem;
+	margin-bottom: 20px;
+	color: #333;
+  }
+  

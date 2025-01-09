@@ -1,116 +1,21 @@
 .reserve {
-	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
 	padding: 20px;
+	box-sizing: border-box;
+	height: 100vh; 
+	transition: all 0.5s ease; 
   }
   
-  .form-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 20px;
+  .reserve.additional-active {
+	flex-direction: row;
+	justify-content: space-between; 
+	padding: 40px;
   }
   
-  .form-header div {
-	text-align: left;
-  }
-  
-  label {
-	display: block;
-	font-weight: bold;
-	margin-bottom: 5px;
-  }
-  
-  input {
-	width: 120px;
-	padding: 5px;
-	border: 1px solid #ddd;
-	border-radius: 5px;
-	font-size: 1rem;
-  }
-  
-  .date-info {
-	text-align: left;
-	font-size: 0.9rem;
-	color: #333;
-  }
-  
-  .calendar {
-	max-width: 600px;
-	margin: 0 auto;
-	border: 1px solid #ddd;
-	border-radius: 10px;
-	overflow: hidden;
-	background: white;
-	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .calendar-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	background-color: #1f95c8;
-	color: white;
-	padding: 10px;
-	font-size: 1.2rem;
-  }
-  
-  .calendar-header button {
-	background: none;
-	border: none;
-	color: white;
-	font-size: 1.5rem;
-	cursor: pointer;
-  }
-  
-  .calendar-days,
-  .row {
-	display: grid;
-	grid-template-columns: repeat(7, 1fr);
-  }
-  
-  .day,
-  .cell {
-	padding: 10px;
-	text-align: center;
-	border: 1px solid #ddd;
-	font-size: 1rem;
-	position: relative;
-	cursor: pointer;
-  }
-  
-  .cell.disabled {
-	color: #aaa;
-  }
-  
-  .cell.past {
-	color: #aaa;
-	background-color: #f2f2f2;
-	pointer-events: none;
-  }
-  
-  .cell.today {
-	font-weight: bold;
-	border: 2px solid #1f95c8;
-  }
-  
-  .cell.available .indicator {
-	width: 8px;
-	height: 8px;
-	background-color: red;
-	border-radius: 50%;
-	position: absolute;
-	bottom: 5px;
-	left: 50%;
-	transform: translateX(-50%);
-  }
-  
-  .cell:hover {
-	background-color: #e0f7fa;
-	transform: scale(1.05);
-	transition: transform 0.3s ease, background-color 0.3s ease;
-  }
-  
-  .book-button {
+  .select-button {
 	background-color: #1f95c8;
 	color: white;
 	border: none;
@@ -119,19 +24,90 @@
 	margin-top: 20px;
 	cursor: pointer;
 	border-radius: 5px;
+	transition: all 0.3s ease;
   }
   
-  .book-button:hover {
+  .select-button:hover {
 	background-color: #146b8a;
   }
   
-  .cell.selected {
-	background-color: #1f95c8;
-	color: white;
+  .select-button:active {
+	transform: scale(0.95); 
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	background-color: #0d4c66;
+  }
+  
+  .calendar {
+	transition: transform 0.5s ease, opacity 0.5s ease;
+	max-width: 600px;
+	margin: 0 auto;
+	text-align: center;
+	flex: 1; 
+  }
+  
+  .calendar-hidden {
+	opacity: 0; 
+	transform: scale(0.95);
+	pointer-events: none; 
+}
+  
+  .additional-fields-container {
+	max-width: 500px;
+	margin: 0 auto;
+	flex: 1; 
+	opacity: 0;
+	transform: translateX(100%); 
+	transition: opacity 0.5s ease, transform 0.5s ease; 
+  }
+  
+  .additional-fields-container.active {
+	opacity: 1; 
+	transform: translate(0, -13%);
+	pointer-events: auto;
+	position: relative;
+	top: 0; 
+}
+  
+  .date-info {
+	text-align: center;
+	font-family: 'Arial', sans-serif;
+	font-size: 1.2rem;
+	margin-top: 30px;
+	margin-bottom: 15px;
+	color: #333; 
+  }
+  
+  .date-info p {
+	margin: 0;
+	padding: 5px 0;
+  }
+  
+  .date-info strong {
 	font-weight: bold;
+	color: #1f95c8;
   }
   
-  .cell.selected:hover {
-	background-color: #146b8a;
+  .date-info .not-selected {
+	font-style: italic;
+	color: #aaa;
+  }
+  
+  .date-info .selected {
+	color: #146b8a;
+  }
+
+  .calendar-slide-up {
+	animation: slide-up-calendar 0.5s forwards;
+  }
+  
+  @keyframes slide-up-calendar {
+	from {
+	  transform: translateY(0);
+	  opacity: 1;
+	}
+	to {
+	  transform: translateY(-100px); 
+	  opacity: 0; 
+	}
   }
   

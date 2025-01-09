@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import '../styles/Hero.css';
@@ -37,10 +36,6 @@ const Hero = () => {
       </div>
     </section>
   );
-};
-
-Hero.propTypes = {
-  navigateToLogin: PropTypes.func.isRequired, 
 };
 
 export default Hero;
