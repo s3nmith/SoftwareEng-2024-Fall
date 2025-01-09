@@ -23,19 +23,19 @@ const AdditionalFields = ({ setAvailableRooms }) => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('room_type', roomType);
-    formData.append('capacity', numberOfGuests);
-    formData.append('max_ppn', budget);
-    formData.append('checkIn_date', format(checkInDate, 'yyyy-MM-dd'));
-    formData.append('checkOut_date', format(checkOutDate, 'yyyy-MM-dd'));
-
     try {
-      const response = await fetch('/api/reservation/search', {
-        method: 'POST',
-        body: formData,
+      const params = new URLSearchParams({
+        room_type: roomType,
+        capacity: numberOfGuests,
+        max_ppn: budget,
+        checkIn_date: format(checkInDate, 'yyyy-MM-dd'),
+        checkOut_date: format(checkOutDate, 'yyyy-MM-dd'),
       });
-
+    
+      const response = await fetch(`/api/reservation/search?${params.toString()}`, {
+        method: 'GET',
+      });
+    
       if (response.ok) {
         const data = await response.json();
         setAvailableRooms(data.rooms);
@@ -51,7 +51,7 @@ const AdditionalFields = ({ setAvailableRooms }) => {
       console.error('Error:', error);
       alert('Failed to connect to the server.');
     }
-  };
+  };    
 
   return (
     <div className="additional-fields-container active">
@@ -102,7 +102,7 @@ const AdditionalFields = ({ setAvailableRooms }) => {
           />
         </div>
         <button className="submit-button" onClick={handleSubmit}>
-          Submit
+          Search
         </button>
       </div>
     </div>
