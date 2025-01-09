@@ -9,6 +9,7 @@ import (
 	"hotel_reservation/utils"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -27,12 +28,11 @@ func SearchRoom(db *sql.DB, store *pgstore.PGStore) http.HandlerFunc {
 		}
 		var requiredRoom room.RoomCriteria
 
-		err := json.NewDecoder(r.Body).Decode(&requiredRoom)
-		if err != nil {
-			http.Error(w, `{"error":"Invalid request."}`, http.StatusInternalServerError)
-			w.Header().Set("Content-Type", "application/json")
-			return
-		}
+		requiredRoom.RoomType = r.URL.Query().Get("room_type")
+		requiredRoom.Capacity, _ = strconv.Atoi(r.URL.Query().Get("capacity"))
+		requiredRoom.MaxPPN, _ = strconv.Atoi(r.URL.Query().Get("max_ppn"))
+		requiredRoom.CheckInDate = r.URL.Query().Get("checkIn_date")
+		requiredRoom.CheckOutDate = r.URL.Query().Get("checkOut_date")
 		//change date strings to time.Time
 		format := "2006-01-02"
 		checkInDate, err := time.Parse(format, requiredRoom.CheckInDate)
