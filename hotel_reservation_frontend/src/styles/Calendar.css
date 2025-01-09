@@ -1,0 +1,120 @@
+.form-header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 20px;
+	padding-top: 50px;
+	font-family: 'Roboto', sans-serif;
+}
+
+.calendar {
+	max-width: 600px; 
+	margin: 0 auto;
+	border: transparent;
+	overflow: hidden;
+	background: white;
+	font-family: 'Roboto', sans-serif;
+}
+
+.calendar-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color: white;
+	color: #1f95c8;
+	font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+	padding: 10px;
+	font-size: 1.3rem;
+}
+
+.calendar-header button {
+	background: none;
+	border: none;
+	color: #1f95c8;
+	font-size: 2rem; 
+	cursor: pointer;
+}
+
+.calendar-days {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+	padding: 10px 0;
+}
+
+.day {
+	font-weight: 500;
+	color: #333;
+	text-align: center;
+	font-size: 1.2rem;
+	padding: 5px;
+}
+
+.row {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+}
+
+.cell {
+	padding: 15px;
+	text-align: center;
+	font-size: 1.3rem;
+	position: relative;
+	cursor: pointer;
+	border: 1px solid #ddd;
+}
+
+.cell.past {
+	color: #aaa;
+	background-color: transparent;
+	border: none;
+	pointer-events: none;
+}
+
+.cell.today {
+	font-weight: bold;
+	border: 3px solid #1f95c8;
+}
+
+.cell:hover {
+	background-color: #e0f7fa;
+	transform: scale(1.1);
+	transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.cell.selected {
+	background-color: #1f95c8;
+	color: white;
+	font-weight: bold;
+}
+
+.cell.selected:hover {
+	background-color: #146b8a;
+}
+
+.cell.in-range {
+	background-color: rgba(0, 123, 255, 0.2); 
+}
+
+.calendar-days {
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+	padding: 10px 0;
+}
+
+.day {
+	border: none;
+}
+
+button:disabled {
+	color: #aaa;
+	cursor: not-allowed;
+}
+
+.cell.empty {
+	background-color: transparent;
+	border: none;
+	pointer-events: none;
+}

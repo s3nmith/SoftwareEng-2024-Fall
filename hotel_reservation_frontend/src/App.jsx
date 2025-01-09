@@ -12,6 +12,7 @@ import Login from './components/Login';
 import MyPage from './components/MyPage';
 import Reserve from './components/Reserve';
 import { UserProvider } from './context/UserContext';
+import { DateProvider } from './context/DateContext';
 
 const App = () => {
   const roomsRef = useRef(null);
@@ -20,6 +21,7 @@ const App = () => {
   const contactRef = useRef(null);
 
   return (
+    <DateProvider>
     <UserProvider>
       <Router>
         <ConditionalNavbar
@@ -56,6 +58,7 @@ const App = () => {
         <Footer />
       </Router>
     </UserProvider>
+    </DateProvider>
   );
 };
 
