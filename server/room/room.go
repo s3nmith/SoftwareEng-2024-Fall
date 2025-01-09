@@ -8,10 +8,6 @@ type Room struct {
 	LatestCheckOutDate string `json:"-"`
 }
 
-func (r *Room) newRoom() {
-
-}
-
 // corresponds to update room availability
 func (r *Room) updateAvailability(isAvailable bool) {
 }
