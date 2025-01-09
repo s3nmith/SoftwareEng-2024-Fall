@@ -28,6 +28,7 @@ const AdditionalFields = ({ setAvailableRooms }) => {
     formData.append('capacity', numberOfGuests);
     formData.append('max_ppn', budget);
     formData.append('checkIn_date', format(checkInDate, 'yyyy-MM-dd'));
+    formData.append('checkOut_date', format(checkOutDate, 'yyyy-MM-dd'));
 
     try {
       const response = await fetch('/api/reservation/search', {
