@@ -1,11 +1,11 @@
 package room
 
 type Room struct {
-	RoomNumber         int    `json:"room_number"`
-	RoomType           string `json:"room_type"`
-	Capacity           int    `json:"capacity"`
-	PPN                int    `json:"ppn"`
-	LatestCheckOutDate string `json:"-"`
+	RoomNumber int    `json:"room_number"`
+	RoomType   string `json:"room_type"`
+	Capacity   int    `json:"capacity"`
+	PPN        int    `json:"ppn"`
+	IsReserved bool   `json:"is_reserved"`
 }
 
 // corresponds to update room availability
@@ -18,8 +18,9 @@ type AvailableRooms struct {
 }
 
 type RoomCriteria struct {
-	RoomType    string `json:"room_type"`
-	Capacity    int    `json:"capacity"`
-	MaxPPN      int    `json:"max_ppn"`
-	CheckInDate string `json:"checkIn_date"`
+	RoomType     string `json:"room_type"`
+	Capacity     int    `json:"capacity"`
+	MaxPPN       int    `json:"max_ppn"`
+	CheckInDate  string `json:"checkIn_date"`
+	CheckOutDate string `json:"checkOut_date"`
 }
