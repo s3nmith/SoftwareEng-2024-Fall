@@ -21,7 +21,7 @@ func SearchRoom(db *sql.DB, store *pgstore.PGStore) http.HandlerFunc {
 	//query database for rooms satisfying the requirements
 	//return json with data if there are matching rooms
 	return func(w http.ResponseWriter, r *http.Request) {
-		if !auth.IsAuthorized(store, r) {
+		if !auth.IsAuthorizedAsUser(store, r) {
 			http.Error(w, `{"error":"Please login to reserve rooms."}`, http.StatusUnauthorized)
 			w.Header().Set("Content-Type", "application/json")
 			return
@@ -152,12 +152,20 @@ func SearchRoom(db *sql.DB, store *pgstore.PGStore) http.HandlerFunc {
 	}
 }
 
+/*
+Could add triggers to constrain to correct inputs (but will not for simplicity and assume that requests will only come through the frontend)
+This is to prevent attacks using API testing tools
+
+Checks that could be done:
+-Date Overlap Checks
+-Price Checks
+*/
 func ConfirmReservation(db *sql.DB, store *pgstore.PGStore) http.HandlerFunc {
 	//use body of request sent from frontend to extract user requirements into a reservation struct
 	//insert reservation into database with the provided info
 	//change availability of rooms
 	return func(w http.ResponseWriter, r *http.Request) {
-		if !auth.IsAuthorized(store, r) {
+		if !auth.IsAuthorizedAsUser(store, r) {
 			http.Error(w, `{"error":"Please login to complete reservation."}`, http.StatusUnauthorized)
 			w.Header().Set("Content-Type", "application/json")
 			return
@@ -182,27 +190,59 @@ func ConfirmReservation(db *sql.DB, store *pgstore.PGStore) http.HandlerFunc {
 			completedReservation.DateOfReservation, completedReservation.DateOfCheckIn, completedReservation.ExpectedDateOfCheckOut,
 			completedReservation.Price, completedReservation.Status, completedReservation.MethodOfPayment)
 		if err != nil {
-			log.Fatal(err)
+			log.Printf("Failed to insert reservation: %v", err)
+			http.Error(w, `{"error":"Failed to process reservation."}`, http.StatusInternalServerError)
+			w.Header().Set("Content-Type", "application/json")
+			return
 		}
+		if len(completedReservation.ReservedRoomNumberList) > 0 {
+			//set reserved rooms' isReserved to true if it is false
+			placeholders := make([]string, len(completedReservation.ReservedRoomNumberList))
+			args := make([]interface{}, len(completedReservation.ReservedRoomNumberList))
+			for i, roomNumber := range completedReservation.ReservedRoomNumberList {
+				placeholders[i] = fmt.Sprintf("$%d", i+1)
+				args[i] = roomNumber
+			}
+			placeholderStr := strings.Join(placeholders, ", ")
 
-		//set reserved rooms' isReserved to true if it is false
-		placeholders := make([]string, len(completedReservation.ReservedRoomNumberList))
-		args := make([]interface{}, len(completedReservation.ReservedRoomNumberList))
-		for i, id := range completedReservation.ReservedRoomNumberList {
-			placeholders[i] = fmt.Sprintf("$%d", i+3)
-			args[i+2] = id
-		}
-		placeholderStr := strings.Join(placeholders, ", ")
-
-		query = fmt.Sprintf(`UPDATE "Rooms"
+			updateQuery := fmt.Sprintf(`UPDATE "Rooms"
 		SET isReserved=true
 		WHERE (isReserved=false) AND (roomNumber IN (%s))
 		`, placeholderStr)
-		_, err = db.Exec(query, args...)
-		if err != nil {
-			log.Fatal(err)
+			_, err = db.Exec(updateQuery, args...)
+			if err != nil {
+				log.Printf("Failed to update reserved rooms: %v", err)
+				http.Error(w, `{"error":"Failed to update reserved rooms."}`, http.StatusInternalServerError)
+				w.Header().Set("Content-Type", "application/json")
+				return
+			}
+			//add roomNumbers and reservationNumber into RoomReservation
+			insertRoomReservationQuery := `INSERT INTO "RoomReservations" (reservationNumber, roomNumber) VALUES `
+			valuePlaceholders := []string{}
+			roomReservationArgs := []interface{}{}
+
+			for i, roomNumber := range completedReservation.ReservedRoomNumberList {
+				placeholderIndex := i * 2
+				valuePlaceholders = append(valuePlaceholders, fmt.Sprintf("($%d, $%d)", placeholderIndex+1, placeholderIndex+2))
+				roomReservationArgs = append(roomReservationArgs, completedReservation.ReservationNumber, roomNumber)
+			}
+
+			insertRoomReservationQuery += strings.Join(valuePlaceholders, ", ")
+			_, err = db.Exec(insertRoomReservationQuery, roomReservationArgs...)
+			if err != nil {
+				log.Printf("Failed to insert into RoomReservations: %v", err)
+				http.Error(w, `{"error":"Failed to update RoomReservations table."}`, http.StatusInternalServerError)
+				return
+			}
 		}
-		//add roomNumbers and reservationNumber into RoomReservation
+		// Send success response
+		response := map[string]interface{}{
+			"message":           "Reservation completed successfully.",
+			"reservationNumber": completedReservation.ReservationNumber,
+		}
+		if err := json.NewEncoder(w).Encode(response); err != nil {
+			log.Printf("Failed to send response: %v", err)
+		}
 
 	}
 }

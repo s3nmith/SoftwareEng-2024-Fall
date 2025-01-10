@@ -67,9 +67,11 @@ func main() {
 	//authentication routes
 	mux.HandleFunc("POST /api/user/register", auth.RegisterUser(db))
 	mux.HandleFunc("POST /api/user/login", auth.LoginUser(db, store))
+	mux.HandleFunc("POST /api/staff/register", auth.RegisterStaff(db))
+	mux.HandleFunc("POST /api/staff/login", auth.LoginStaff(db, store))
 	//reservation routes
 	mux.HandleFunc("/api/reservation/search", reservation.SearchRoom(db, store))
-	mux.HandleFunc("/api/reservation/confirm", reservation.ConfirmReservation(db, store))
+	mux.HandleFunc("POST /api/reservation/confirm", reservation.ConfirmReservation(db, store))
 
 	//check-in routes
 
@@ -152,6 +154,7 @@ func createStaffTable(db *sql.DB) {
 	query := `CREATE TABLE IF NOT EXISTS "Staff"(
 		id SERIAL PRIMARY KEY,
 		email VARCHAR(100) NOT NULL,
+		username VARCHAR(100) NOT NULL,
 		hashedPassword VARCHAR(100) NOT NULL,
 		created timestamp DEFAULT NOW()
  	);
