@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import '../styles/MyPage.css';
 import NavbarMinimalWithReserve from './NavbarMinimalWithReserve';
-import oceanViewImage from '../assets/hotel-single.png';
+import oceanViewImage from '../assets/hotel-single.jpg';
 import deluxeRoomImage from '../assets/hotel-deluxe.jpg';
 import gardenVillaImage from '../assets/hotel-suite.jpg';
 
@@ -42,7 +42,6 @@ const MyPage = () => {
   const [expandedCard, setExpandedCard] = useState(null);
   const [userId, setUserId] = useState(null);
 
-  // Retrieve user_id from localStorage when the component mounts
   useEffect(() => {
     const storedUserId = localStorage.getItem('user_id');
     setUserId(storedUserId);
@@ -61,7 +60,6 @@ const MyPage = () => {
       <NavbarMinimalWithReserve />
       <div className="mypage">
         <h1>My Reservations</h1>
-        {/* Display the user_id */}
         {userId && (
           <p className="user-id">Logged in as User ID: <strong>{userId}</strong></p>
         )}

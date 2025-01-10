@@ -1,0 +1,62 @@
+.selected-rooms {
+	position: fixed;
+	top: 150px;
+	right: -350px;
+	width: 300px;
+	padding: 20px;
+	background-color: #f9f9f9;
+	border: 1px solid #1f95c8;
+	border-radius: 10px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	z-index: 1000;
+	opacity: 0;
+	transition: transform 0.5s ease, opacity 0.5s ease;
+  }
+  
+  .selected-rooms.active {
+	right: 20px; 
+	opacity: 1;
+  }
+  
+  .selected-rooms h3 {
+	font-family: 'Trebuchet MS', sans-serif;
+	color: #1f95c8;
+	margin-bottom: 10px;
+  }
+  
+  .selected-rooms ul {
+	list-style-type: none;
+	padding: 0;
+  }
+  
+  .selected-rooms li {
+	font-size: 1rem;
+	font-family: 'Arial', sans-serif;
+	color: #333;
+	margin-bottom: 5px;
+  }
+
+  .proceed-button {
+	background-color: #1f95c8;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	font-size: 1rem;
+	cursor: pointer;
+	border-radius: 5px;
+	margin-top: 20px;
+	width: 100%; 
+	text-align: center;
+	transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .proceed-button:hover {
+	background-color: #146b8a; 
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
+  
+  .proceed-button:active {
+	background-color: #0d4c66;
+  }
+  
+  

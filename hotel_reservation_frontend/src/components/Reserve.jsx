@@ -1,19 +1,38 @@
-import { useContext, useState } from 'react';
+import { useContext, useState, useRef } from 'react';
 import NavbarMinimal from './NavbarMinimal';
 import Calendar from './Calendar';
 import AdditionalFields from './AdditionalFields';
+import RoomCard from './RoomCardAva';
+import SelectedRooms from './SelectedRooms'; 
 import '../styles/Reserve.css';
 import { format } from 'date-fns';
 import { DateContext } from '../context/DateContext';
 
 const Reserve = () => {
-  const { checkInDate, setCheckInDate, checkOutDate, setCheckOutDate } = useContext(DateContext); 
+  const { checkInDate, setCheckInDate, checkOutDate, setCheckOutDate } = useContext(DateContext);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [showAdditionalFields, setShowAdditionalFields] = useState(false);
   const [availableRooms, setAvailableRooms] = useState([]);
+  const [selectedRooms, setSelectedRooms] = useState([]); 
+  const roomResultsRef = useRef(null);
 
   const handleSelectClick = () => {
     setShowAdditionalFields(true);
+  };
+
+  const handleRoomsUpdate = (rooms) => {
+    setAvailableRooms(rooms);
+    if (rooms.length > 0) {
+      roomResultsRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleRoomSelection = (roomNumber) => {
+    setSelectedRooms((prevSelected) =>
+      prevSelected.includes(roomNumber)
+        ? prevSelected.filter((number) => number !== roomNumber)
+        : [...prevSelected, roomNumber]
+    );
   };
 
   return (
@@ -58,22 +77,27 @@ const Reserve = () => {
           </div>
         ) : (
           <div className="additional-fields-container active">
-            <AdditionalFields setAvailableRooms={setAvailableRooms}/>
+            <AdditionalFields setAvailableRooms={handleRoomsUpdate} />
           </div>
         )}
       </div>
       {availableRooms.length > 0 && (
-        <div className="room-results">
-          <h2>Available Rooms</h2>
-          {availableRooms.map((room) => (
-            <div key={room.room_number}>
-              <p>Room Number: {room.room_number}</p>
-              <p>Room Type: {room.room_type}</p>
-              <p>Capacity: {room.capacity}</p>
-              <p>Price per Night: {room.ppn} JPY</p>
-            </div>
-          ))}
+        <div ref={roomResultsRef} className="room-results">
+          <h2 className="available-text">Available Rooms</h2>
+          <div className="room-cards">
+            {availableRooms.map((room) => (
+              <RoomCard
+                key={room.room_number}
+                room={room}
+                onSelectRoom={handleRoomSelection}
+                isSelected={selectedRooms.includes(room.room_number)}
+              />
+            ))}
+          </div>
         </div>
+      )}
+      {selectedRooms.length > 0 && (
+        <SelectedRooms selectedRooms={selectedRooms} /> 
       )}
     </div>
   );

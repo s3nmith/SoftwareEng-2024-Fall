@@ -1,5 +1,5 @@
 import '../styles/Rooms.css';
-import singleRoomImage from '../assets/hotel-single.png';
+import singleRoomImage from '../assets/hotel-single.jpg';
 import deluxeRoomImage from '../assets/hotel-deluxe.jpg';
 import suiteRoomImage from '../assets/hotel-suite.jpg';
 

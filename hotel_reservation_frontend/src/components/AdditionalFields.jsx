@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import singleRoomImage from '../assets/hotel-single.png';
+import singleRoomImage from '../assets/hotel-single.jpg';
 import deluxeRoomImage from '../assets/hotel-deluxe.jpg';
 import suiteRoomImage from '../assets/hotel-suite.jpg';
 import { DateContext } from '../context/DateContext';
@@ -39,7 +39,6 @@ const AdditionalFields = ({ setAvailableRooms }) => {
       if (response.ok) {
         const data = await response.json();
         setAvailableRooms(data.rooms);
-        alert('Rooms found!');
       } else if (response.status === 401) {
         alert('Please login to reserve rooms.');
       } else if (response.status === 404) {

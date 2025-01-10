@@ -11,6 +11,7 @@ import Footer from './components/Footer';
 import Login from './components/Login';
 import MyPage from './components/MyPage';
 import Reserve from './components/Reserve';
+import Payment from './components/Payments';
 import { UserProvider } from './context/UserContext';
 import { DateProvider } from './context/DateContext';
 
@@ -54,6 +55,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/reserve" element={<Reserve />} />
+          <Route path="/payment" element={<Payment />} />
         </Routes>
         <Footer />
       </Router>

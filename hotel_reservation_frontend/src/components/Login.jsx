@@ -26,7 +26,9 @@ const Login = () => {
       if (response.ok) {
         localStorage.setItem('user_id', data.user_id);
         setUserId(data.user_id);
-        navigate('/mypage');
+        alert('Registration Successful');
+        navigate('/login');
+        window.location.reload();
       } else {
         setError(data.error || 'Failed to register. Please try again.');
       }
@@ -72,7 +74,6 @@ const Login = () => {
 
         {error && <p className="error-message">{error}</p>}
 
-        {/* Login Section */}
         <div className="collapsible-box">
           <div className="box-header" onClick={() => toggleSection('login')}>
             <h2 className="header-text">Login</h2>
@@ -95,7 +96,6 @@ const Login = () => {
           </div>
         </div>
 
-        {/* Registration Section */}
         <div className="collapsible-box">
           <div className="box-header" onClick={() => toggleSection('register')}>
             <h2 className="header-text">Registration</h2>
@@ -122,7 +122,6 @@ const Login = () => {
           </div>
         </div>
 
-        {/* Staff Login Section */}
         <div className="collapsible-box">
           <div className="box-header" onClick={() => toggleSection('staff-login')}>
             <h2 className="header-text">Staff Login</h2>
