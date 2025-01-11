@@ -21,7 +21,7 @@ func SearchRoom(db *sql.DB, store *pgstore.PGStore) http.HandlerFunc {
 	//query database for rooms satisfying the requirements
 	//return json with data if there are matching rooms
 	return func(w http.ResponseWriter, r *http.Request) {
-		if !auth.IsAuthorizedAsUser(store, r) {
+		if ok, _ := auth.IsAuthorizedAsUser(store, r); !ok {
 			http.Error(w, `{"error":"Please login to reserve rooms."}`, http.StatusUnauthorized)
 			w.Header().Set("Content-Type", "application/json")
 			return
@@ -165,17 +165,29 @@ func ConfirmReservation(db *sql.DB, store *pgstore.PGStore) http.HandlerFunc {
 	//insert reservation into database with the provided info
 	//change availability of rooms
 	return func(w http.ResponseWriter, r *http.Request) {
-		if !auth.IsAuthorizedAsUser(store, r) {
+		ok, email := auth.IsAuthorizedAsUser(store, r)
+		if !ok {
 			http.Error(w, `{"error":"Please login to complete reservation."}`, http.StatusUnauthorized)
+			w.Header().Set("Content-Type", "application/json")
+			return
+		}
+
+		var userID int
+		//get user id from user email
+		userIdQuery := `SELECT userId from "Users" WHERE email=$1;`
+
+		err := db.QueryRow(userIdQuery, email).Scan(&userID)
+		if err != nil {
+			http.Error(w, `{"error":"Could not find userId."}`, http.StatusInternalServerError)
 			w.Header().Set("Content-Type", "application/json")
 			return
 		}
 
 		var completedReservation Reservation
 
-		err := json.NewDecoder(r.Body).Decode(&completedReservation)
+		err = json.NewDecoder(r.Body).Decode(&completedReservation)
 		if err != nil {
-			http.Error(w, `{"error":"Invalid request."}`, http.StatusInternalServerError)
+			http.Error(w, `{"error":"Invalid request."}`, http.StatusBadRequest)
 			w.Header().Set("Content-Type", "application/json")
 			return
 		}
@@ -183,12 +195,12 @@ func ConfirmReservation(db *sql.DB, store *pgstore.PGStore) http.HandlerFunc {
 		completedReservation.ReservationNumber = utils.GenerateRandomNDigits(8)
 
 		//insert reservation data into database
-		query := `INSERT INTO "Reservations" (reservationNumber,dateOfReservation,dateOfCheckIn,expectedDateOfCheckout,price,status,methodOfPayment) 
+		query := `INSERT INTO "Reservations" (reservationNumber,dateOfReservation,dateOfCheckIn,expectedDateOfCheckout,price,status,methodOfPayment,userId) 
 				  VALUES
-				  ($1,$2,$3,$4,$5,$6,$7);`
+				  ($1,$2,$3,$4,$5,$6,$7,$8);`
 		_, err = db.Exec(query, completedReservation.ReservationNumber,
 			completedReservation.DateOfReservation, completedReservation.DateOfCheckIn, completedReservation.ExpectedDateOfCheckOut,
-			completedReservation.Price, completedReservation.Status, completedReservation.MethodOfPayment)
+			completedReservation.Price, completedReservation.Status, completedReservation.MethodOfPayment, userID)
 		if err != nil {
 			log.Printf("Failed to insert reservation: %v", err)
 			http.Error(w, `{"error":"Failed to process reservation."}`, http.StatusInternalServerError)
@@ -246,3 +258,5 @@ func ConfirmReservation(db *sql.DB, store *pgstore.PGStore) http.HandlerFunc {
 
 	}
 }
+
+

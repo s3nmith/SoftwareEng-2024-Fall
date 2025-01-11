@@ -4,7 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 	"hotel_reservation/auth"
+	checkout "hotel_reservation/checkOut"
 	"hotel_reservation/reservation"
+	"hotel_reservation/staff"
+	"hotel_reservation/user"
 	"log"
 	"net/http"
 	"os"
@@ -63,7 +66,6 @@ func main() {
 	//test routes
 	mux.HandleFunc("/api/message/get", getMessage)
 	mux.HandleFunc("POST /api/message/post", postMessage)
-
 	//authentication routes
 	mux.HandleFunc("POST /api/user/register", auth.RegisterUser(db))
 	mux.HandleFunc("POST /api/user/login", auth.LoginUser(db, store))
@@ -76,7 +78,13 @@ func main() {
 	//check-in routes
 
 	//check-out routes
+	mux.HandleFunc("DELETE /api/reservation/checkOut", checkout.CheckOut(db, store))
+	//staff routes
+	mux.HandleFunc("/api/staff/reservations", staff.GetAllReservations(db, store))
+	mux.HandleFunc("/api/staff/reservation", staff.GetReservationByNumber(db, store))
 
+	//user routes
+	mux.HandleFunc("/api/user/reservations", user.GetAllUserReservations(db, store))
 	// Start the server
 	port := "8080"
 	log.Printf("Starting file server on :%s...\n", port)
@@ -136,7 +144,7 @@ func dropAllTables(db *sql.DB) {
 }
 func createUserTable(db *sql.DB) {
 	query := `CREATE TABLE IF NOT EXISTS "Users"(
-		id SERIAL PRIMARY KEY,
+		userId SERIAL PRIMARY KEY,
 		email VARCHAR(100) NOT NULL UNIQUE,
 		username VARCHAR(100) NOT NULL,
 		hashedPassword VARCHAR(100) NOT NULL,
@@ -152,7 +160,7 @@ func createUserTable(db *sql.DB) {
 
 func createStaffTable(db *sql.DB) {
 	query := `CREATE TABLE IF NOT EXISTS "Staff"(
-		id SERIAL PRIMARY KEY,
+		staffId SERIAL PRIMARY KEY,
 		email VARCHAR(100) NOT NULL,
 		username VARCHAR(100) NOT NULL,
 		hashedPassword VARCHAR(100) NOT NULL,
@@ -175,7 +183,10 @@ func createReservationTable(db *sql.DB) {
 		expectedDateOfCheckOut DATE NOT NULL,
 		price INT NOT NULL,
 		status VARCHAR(11) NOT NULL CHECK (status IN ('completed', 'in_progress')),
-		methodOfPayment VARCHAR(9) NOT NULL CHECK (methodOfPayment IN ('in_person', 'online'))
+		methodOfPayment VARCHAR(9) NOT NULL CHECK (methodOfPayment IN ('in_person', 'online')),
+		userId INT NOT NULL,
+		FOREIGN KEY (userId) REFERENCES "Users"(userId)
+        ON DELETE CASCADE
 	);
 	`
 	_, err := db.Exec(query)
