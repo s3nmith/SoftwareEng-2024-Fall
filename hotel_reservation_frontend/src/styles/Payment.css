@@ -1,0 +1,133 @@
+.payment-container {
+	display: flex;
+	justify-content: space-between;
+	padding: 20px;
+	font-family: 'Trebuchet MS', Arial, sans-serif;
+  }
+  
+  .payment-method,
+  .trip-summary {
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 10px;
+	padding: 20px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	width: 48%;
+  }
+  
+  h2,
+  h3 {
+	color: #1f95c8;
+  }
+  
+  .saved-cards {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+  }
+  
+  .card-option {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 10px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+  }
+  
+  .card-option:hover {
+	background-color: #f0f8ff;
+  }
+  
+  .card-option.selected {
+	border: 2px solid #1f95c8;
+  }
+  
+  .card-info {
+	display: flex;
+	flex-direction: column;
+  }
+  
+  .add-payment-button {
+	background: #1f95c8;
+	color: white;
+	border: none;
+	padding: 10px;
+	margin-top: 15px;
+	cursor: pointer;
+	border-radius: 5px;
+	text-align: center;
+  }
+  
+  .add-payment-button:hover {
+	background: #146b8a;
+  }
+  
+  .policy-section {
+	margin-top: 20px;
+  }
+  
+  .policy-section h3 {
+	margin-bottom: 10px;
+  }
+  
+  .policy-section p,
+  .policy-section ul {
+	font-size: 0.9rem;
+	color: #333;
+  }
+  
+  .policy-section a {
+	color: #1f95c8;
+	text-decoration: none;
+  }
+  
+  .policy-section a:hover {
+	text-decoration: underline;
+  }
+  
+  .trip-summary {
+	display: flex;
+	flex-direction: column;
+  }
+  
+  .trip-image {
+	width: 100%;
+	border-radius: 10px;
+	margin-bottom: 15px;
+  }
+  
+  .summary-details p,
+  .pricing-breakdown p {
+	margin: 8px 0;
+	font-size: 0.9rem;
+	color: #333;
+  }
+  
+  .pricing-breakdown {
+	margin-top: 20px;
+  }
+  
+  .pricing-breakdown p span {
+	float: right;
+	font-weight: bold;
+  }
+  
+  .confirm-button {
+	background: #1f95c8;
+	color: white;
+	border: none;
+	padding: 15px;
+	margin-top: 20px;
+	cursor: pointer;
+	border-radius: 5px;
+	text-align: center;
+	font-size: 1rem;
+  }
+  
+  .confirm-button:hover {
+	background: #146b8a;
+  }
+  

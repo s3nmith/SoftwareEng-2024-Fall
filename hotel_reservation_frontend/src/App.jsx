@@ -67,7 +67,7 @@ const App = () => {
 const ConditionalNavbar = ({ roomsRef, diningRef, aboutRef, contactRef }) => {
   const location = useLocation();
 
-  if ((location.pathname === '/login') || (location.pathname === '/mypage') || (location.pathname === '/reserve')) {
+  if ((location.pathname === '/login') || (location.pathname === '/mypage') || (location.pathname === '/reserve') || (location.pathname == '/payment')) {
     return null;
   }
 
