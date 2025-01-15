@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"hotel_reservation/auth"
+	checkin "hotel_reservation/checkIn"
 	checkout "hotel_reservation/checkOut"
 	"hotel_reservation/reservation"
 	"hotel_reservation/staff"
@@ -76,7 +77,7 @@ func main() {
 	mux.HandleFunc("POST /api/reservation/confirm", reservation.ConfirmReservation(db, store))
 
 	//check-in routes
-
+	mux.HandleFunc("PUT /api/reservation/checkIn", checkin.CheckIn(db, store))
 	//check-out routes
 	mux.HandleFunc("DELETE /api/reservation/checkOut", checkout.CheckOut(db, store))
 	//staff routes
