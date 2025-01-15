@@ -1,37 +1,14 @@
 package reservation
 
-import (
-	"hotel_reservation/room"
-)
-
-const (
-	RE_COMPLETED  = 0
-	RE_CHECKED_IN = 1
-)
-
 type Reservation struct {
-	DateOfReservation      string
-	ReservationNumber      int
-	DateOfCheckIn          string
-	ExpectedDateOfCheckOut string
-	Price                  int
-	Status                 int
-	MethodOfPayment        int
-	ReservedRoomList       []room.Room
-}
-
-// corresponds to create()
-func (r *Reservation) NewReservation(dateOfReservation string, reservationNumber int, dateOfCheckIn, expectedDateOfCheckOut string, price, methodOfPayment int) *Reservation {
-	return &Reservation{
-		DateOfReservation:      dateOfReservation,
-		ReservationNumber:      reservationNumber,
-		DateOfCheckIn:          dateOfCheckIn,
-		ExpectedDateOfCheckOut: expectedDateOfCheckOut,
-		Price:                  price,
-		Status:                 RE_COMPLETED,
-		MethodOfPayment:        methodOfPayment,
-		ReservedRoomList:       make([]room.Room, 0),
-	}
+	DateOfReservation      string `json:"date_of_reservation"`
+	ReservationNumber      string `json:"reservation_number"`
+	DateOfCheckIn          string `json:"checkIn_date"`
+	ExpectedDateOfCheckOut string `json:"checkOut_date"`
+	Price                  int    `json:"price"`
+	Status                 string `json:"status"`
+	MethodOfPayment        string `json:"payment_method"`
+	ReservedRoomNumberList []int  `json:"reserved_room_numbers"`
 }
 
 // corresponds to verify validity
