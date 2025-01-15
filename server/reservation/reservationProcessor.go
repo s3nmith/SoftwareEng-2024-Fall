@@ -119,6 +119,7 @@ func SearchRoom(db *sql.DB, store *pgstore.PGStore) http.HandlerFunc {
 		defer rows.Close()
 
 		var rooms []room.Room
+		addedRoomNumbers := make(map[int]bool)
 		for rows.Next() {
 			var room room.Room
 			if err := rows.Scan(&room.RoomNumber, &room.RoomType, &room.Capacity, &room.PPN, &room.IsReserved); err != nil {
@@ -126,7 +127,12 @@ func SearchRoom(db *sql.DB, store *pgstore.PGStore) http.HandlerFunc {
 				log.Printf("Scan error: %v", err)
 				return
 			}
-			rooms = append(rooms, room)
+			//remove duplicates
+			if _, exists := addedRoomNumbers[room.RoomNumber]; !exists {
+				rooms = append(rooms, room)
+				addedRoomNumbers[room.RoomNumber] = true
+			}
+
 		}
 
 		if err := rows.Err(); err != nil {
@@ -258,5 +264,3 @@ func ConfirmReservation(db *sql.DB, store *pgstore.PGStore) http.HandlerFunc {
 
 	}
 }
-
-
