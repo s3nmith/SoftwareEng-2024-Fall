@@ -2,6 +2,7 @@ package checkin
 
 import (
 	"database/sql"
+	"fmt"
 	"hotel_reservation/auth"
 	"net/http"
 
@@ -34,15 +35,17 @@ func CheckIn(db *sql.DB, store *pgstore.PGStore) http.HandlerFunc {
 		`
 		if _, err := db.Exec(updateRoomQuery, reservationNumber); err != nil {
 			http.Error(w, `{"error":"Failed to update room status."}`, http.StatusInternalServerError)
+			fmt.Println(err)
 			return
 		}
 		updateReservationQuery := `
 		UPDATE "Reservations"
-		SET status="in_progress"
+		SET status='in_progress'
 		WHERE reservationNumber=$1;
 		`
 		if _, err := db.Exec(updateReservationQuery, reservationNumber); err != nil {
-			http.Error(w, `{"error":"Failed to update room status."}`, http.StatusInternalServerError)
+			http.Error(w, `{"error":"Failed to update reservation status."}`, http.StatusInternalServerError)
+			fmt.Println(err)
 			return
 		}
 

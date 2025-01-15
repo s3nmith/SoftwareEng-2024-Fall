@@ -27,13 +27,13 @@ const Reserve = () => {
     }
   };
 
-  const handleRoomSelection = (roomNumber) => {
+  const handleRoomSelection = (room) => {
     setSelectedRooms((prevSelected) =>
-      prevSelected.includes(roomNumber)
-        ? prevSelected.filter((number) => number !== roomNumber)
-        : [...prevSelected, roomNumber]
+      prevSelected.some((selectedRoom) => selectedRoom.room_number === room.room_number)
+        ? prevSelected.filter((selectedRoom) => selectedRoom.room_number !== room.room_number)
+        : [...prevSelected, room]
     );
-  };
+  };  
 
   return (
     <div>
@@ -84,7 +84,7 @@ const Reserve = () => {
       {availableRooms.length > 0 && (
         <div ref={roomResultsRef} className="room-results">
           <h2 className="available-text">Available Rooms</h2>
-          <div className="room-cards">
+          <div className="reserve-room-cards">
             {availableRooms.map((room) => (
               <RoomCard
                 key={room.room_number}

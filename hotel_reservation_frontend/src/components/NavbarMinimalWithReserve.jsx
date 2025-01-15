@@ -1,10 +1,13 @@
 import { useNavigate } from 'react-router-dom';
-import { FaCalendarAlt } from 'react-icons/fa';
+import { FaCalendarAlt, FaSignOutAlt } from 'react-icons/fa';
+import { useContext } from 'react';
+import { UserContext } from '../context/UserContext';
 import '../styles/NavbarMinimalWithReserve.css';
 import hotelLogo from '../assets/hotel-logo.png';
 
 const NavbarMinimalWithReserve = () => {
   const navigate = useNavigate();
+  const { setUserId } = useContext(UserContext);
 
   const handleLogoClick = () => {
     navigate('/'); 
@@ -12,6 +15,12 @@ const NavbarMinimalWithReserve = () => {
 
   const handleReserveClick = () => {
     navigate('/reserve');
+  };
+
+  const handleSignOut = () => {
+    setUserId(null);
+    localStorage.removeItem('user_id');
+    navigate('/');
   };
 
   return (
@@ -29,6 +38,10 @@ const NavbarMinimalWithReserve = () => {
           <button className="navbar-btn reserve-btn" onClick={handleReserveClick}>
             <FaCalendarAlt className="icon" />
             Reserve
+          </button>
+          <button className="navbar-btn signout-btn" onClick={handleSignOut}>
+            <FaSignOutAlt className="icon" />
+            Sign Out
           </button>
         </div>
       </div>

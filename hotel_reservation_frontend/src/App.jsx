@@ -12,6 +12,7 @@ import Login from './components/Login';
 import MyPage from './components/MyPage';
 import Reserve from './components/Reserve';
 import Payment from './components/Payments';
+import Admin from './components/Admin';
 import { UserProvider } from './context/UserContext';
 import { DateProvider } from './context/DateContext';
 
@@ -56,6 +57,7 @@ const App = () => {
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/reserve" element={<Reserve />} />
           <Route path="/payment" element={<Payment />} />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
         <Footer />
       </Router>
@@ -67,7 +69,7 @@ const App = () => {
 const ConditionalNavbar = ({ roomsRef, diningRef, aboutRef, contactRef }) => {
   const location = useLocation();
 
-  if ((location.pathname === '/login') || (location.pathname === '/mypage') || (location.pathname === '/reserve') || (location.pathname == '/payment')) {
+  if ((location.pathname === '/login') || (location.pathname === '/mypage') || (location.pathname === '/reserve') || (location.pathname == '/payment') || (location.pathname == '/admin')) {
     return null;
   }
 

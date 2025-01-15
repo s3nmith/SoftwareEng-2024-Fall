@@ -1,14 +1,18 @@
 import { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import singleRoomImage from '../assets/hotel-single.jpg';
 import deluxeRoomImage from '../assets/hotel-deluxe.jpg';
 import suiteRoomImage from '../assets/hotel-suite.jpg';
 import { DateContext } from '../context/DateContext';
+import { UserContext } from '../context/UserContext';
 import '../styles/AdditionalFields.css';
 import { format } from 'date-fns';
 import PropTypes from 'prop-types';
 
 const AdditionalFields = ({ setAvailableRooms }) => {
   const { checkInDate, checkOutDate } = useContext(DateContext);
+  const { userId } = useContext(UserContext);
+  const navigate = useNavigate();
   const [numberOfGuests, setNumberOfGuests] = useState(1);
   const [roomType, setRoomType] = useState('');
   const [budget, setBudget] = useState('');
@@ -18,6 +22,12 @@ const AdditionalFields = ({ setAvailableRooms }) => {
   };
 
   const handleSubmit = async () => {
+    if (!userId) {
+      alert('You must be logged in to search for rooms. Redirecting to login page.');
+      navigate('/login');
+      return;
+    }
+
     if (!roomType || !numberOfGuests || !budget || !checkInDate || !checkOutDate) {
       alert('Please fill in all fields.');
       return;
@@ -48,7 +58,6 @@ const AdditionalFields = ({ setAvailableRooms }) => {
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Failed to connect to the server.');
     }
   };    
 
@@ -71,21 +80,21 @@ const AdditionalFields = ({ setAvailableRooms }) => {
               className={`room-card ${roomType === 'single' ? 'selected' : ''}`}
               onClick={() => handleRoomTypeClick('single')}
             >
-              <img src={singleRoomImage} alt="Single Room" className="room-image" />
+              <img src={singleRoomImage} alt="Single Room" className="room-image-add" />
               <h3>Single</h3>
             </div>
             <div
               className={`room-card ${roomType === 'deluxe' ? 'selected' : ''}`}
               onClick={() => handleRoomTypeClick('deluxe')}
             >
-              <img src={deluxeRoomImage} alt="Deluxe Room" className="room-image" />
+              <img src={deluxeRoomImage} alt="Deluxe Room" className="room-image-add" />
               <h3>Deluxe</h3>
             </div>
             <div
               className={`room-card ${roomType === 'suite' ? 'selected' : ''}`}
               onClick={() => handleRoomTypeClick('suite')}
             >
-              <img src={suiteRoomImage} alt="Suite Room" className="room-image" />
+              <img src={suiteRoomImage} alt="Suite Room" className="room-image-add" />
               <h3>Suite</h3>
             </div>
           </div>

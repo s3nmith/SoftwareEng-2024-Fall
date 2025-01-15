@@ -1,50 +1,38 @@
 import { useState, useEffect } from 'react';
 import '../styles/MyPage.css';
 import NavbarMinimalWithReserve from './NavbarMinimalWithReserve';
-import oceanViewImage from '../assets/hotel-single.jpg';
-import deluxeRoomImage from '../assets/hotel-deluxe.jpg';
-import gardenVillaImage from '../assets/hotel-suite.jpg';
 
 const MyPage = () => {
-  const reservations = [
-    {
-      id: 1,
-      title: 'Garden Villa Single',
-      date: '2025-01-15',
-      guests: 2,
-      checkIn: '2025-01-14',
-      checkOut: '2025-01-16',
-      price: '$400',
-      image: oceanViewImage,
-    },
-    {
-      id: 2,
-      title: 'Ocean View Deluxe',
-      date: '2025-01-20',
-      guests: 1,
-      checkIn: '2025-01-19',
-      checkOut: '2025-01-21',
-      price: '$250',
-      image: deluxeRoomImage,
-    },
-    {
-      id: 3,
-      title: 'Ocean View Suite',
-      date: '2025-01-25',
-      guests: 4,
-      checkIn: '2025-01-24',
-      checkOut: '2025-01-26',
-      price: '$600',
-      image: gardenVillaImage,
-    },
-  ];
-
+  const [reservations, setReservations] = useState([]);
   const [expandedCard, setExpandedCard] = useState(null);
-  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    const storedUserId = localStorage.getItem('user_id');
-    setUserId(storedUserId);
+    const fetchReservations = async () => {
+      try {
+        const response = await fetch('/api/user/reservations');
+        if (response.ok) {
+          const data = await response.json();
+          setReservations(
+            data.reservations.map((reservation, index) => ({
+              id: index + 1,
+              title: `Reservation #${reservation.reservation_number}`,
+              date: new Date(reservation.date_of_reservation).toLocaleDateString(),
+              checkIn: new Date(reservation.checkIn_date).toLocaleDateString(),
+              checkOut: new Date(reservation.checkOut_date).toLocaleDateString(),
+              guests: reservation.reserved_room_numbers ? reservation.reserved_room_numbers.length : 1,
+              price: `${reservation.price} JPY`,
+              status: reservation.status,
+            }))
+          );
+        } else {
+          console.error('Failed to fetch reservations.');
+        }
+      } catch (error) {
+        console.error('Error fetching reservations:', error);
+      }
+    };
+
+    fetchReservations();
   }, []);
 
   const handleCardClick = (id) => {
@@ -52,6 +40,9 @@ const MyPage = () => {
   };
 
   const handleCancelReservation = (id) => {
+    setReservations((prevReservations) =>
+      prevReservations.filter((reservation) => reservation.id !== id)
+    );
     alert(`Reservation ${id} has been cancelled.`);
   };
 
@@ -60,9 +51,6 @@ const MyPage = () => {
       <NavbarMinimalWithReserve />
       <div className="mypage">
         <h1>My Reservations</h1>
-        {userId && (
-          <p className="user-id">Logged in as User ID: <strong>{userId}</strong></p>
-        )}
         <div className="reservations">
           {reservations.map((reservation) => (
             <div
@@ -72,14 +60,9 @@ const MyPage = () => {
               key={reservation.id}
               onClick={() => handleCardClick(reservation.id)}
             >
-              <img
-                src={reservation.image}
-                alt={reservation.title}
-                className="reservation-image"
-              />
               <div className="reservation-details">
                 <h2>{reservation.title}</h2>
-                <p>Date: {reservation.date}</p>
+                <p>Date of Reservation: {reservation.date}</p>
               </div>
               <div
                 className={`expanded-details ${
@@ -90,6 +73,7 @@ const MyPage = () => {
                 <p>Check-out: {reservation.checkOut}</p>
                 <p>Guests: {reservation.guests}</p>
                 <p>Price: {reservation.price}</p>
+                <p>Status: {reservation.status}</p>
                 <button
                   className="cancel-button"
                   onClick={(e) => {

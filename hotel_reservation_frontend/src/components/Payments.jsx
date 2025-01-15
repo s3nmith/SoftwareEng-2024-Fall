@@ -1,124 +1,152 @@
-import { useState } from 'react';
-import NavbarMinimal from './NavbarMinimal'; // Import NavbarMinimal
+import { useState, useContext } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import NavbarMinimal from './NavbarMinimal';
 import '../styles/Payment.css';
+import { DateContext } from '../context/DateContext';
 
 const Payment = () => {
+  const { checkInDate, checkOutDate } = useContext(DateContext);
+  const { state } = useLocation(); 
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
+  const [showAddPayment, setShowAddPayment] = useState(false); 
+  const navigate = useNavigate();
+
+  const { selectedRooms, totalPrice } = state || {};
 
   const handlePaymentMethodChange = (method) => {
     setSelectedPaymentMethod(method);
-  };
-
-  const handleConfirmPayment = () => {
-    if (selectedPaymentMethod) {
-      console.log(`Payment Method Selected: ${selectedPaymentMethod}`);
-      alert(`Proceeding with ${selectedPaymentMethod} payment.`);
-    } else {
-      alert('Please select a payment method before proceeding.');
+    if (method === 'online') {
+      setShowAddPayment(true);
     }
   };
 
+  const handleConfirmPayment = async () => {
+    if (!selectedPaymentMethod) {
+      alert('Please select a payment method before proceeding.');
+      return;
+    }
+
+    if (selectedPaymentMethod === 'online' && showAddPayment) {
+      alert('Please complete adding your payment method.');
+      return;
+    }
+
+    const reservedRoomNumbers = selectedRooms.map((room) => room.room_number);
+
+    const reservationData = {
+      date_of_reservation: new Date().toISOString().split('T')[0],
+      reservation_number: '',
+      checkIn_date: checkInDate ? checkInDate.toISOString().split('T')[0] : null,
+      checkOut_date: checkOutDate ? checkOutDate.toISOString().split('T')[0] : null,
+      price: totalPrice,
+      status: 'completed',
+      payment_method: selectedPaymentMethod.toLowerCase().replace(' ', '_'),
+      reserved_room_numbers: reservedRoomNumbers,
+    };
+
+    try {
+      const response = await fetch('/api/reservation/confirm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(reservationData),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        alert(`Reservation completed successfully. Reservation Number: ${data.reservationNumber}`);
+        navigate('/mypage');
+      } else if (response.status === 401) {
+        alert('Please login to complete the reservation.');
+      } else {
+        alert('An error occurred while processing your reservation. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An unexpected error occurred. Please try again later.');
+    }
+  };
+
+  const handleCancelPayment = () => {
+    alert('Payment cancelled. Redirecting to home page.');
+    navigate('/');
+  };
+
+  if (!selectedRooms || !totalPrice) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div>
-      <NavbarMinimal /> {/* Use NavbarMinimal */}
+      <NavbarMinimal />
       <div className="payment-container">
-        <div className="payment-method">
-          <h2>Payment Method</h2>
-          <div className="saved-cards">
-            <div
-              className={`card-option ${selectedPaymentMethod === 'Visa' ? 'selected' : ''}`}
-              onClick={() => handlePaymentMethodChange('Visa')}
-            >
-              <div className="card-info">
-                <span>Visa ending in 1234</span>
-                <span>Expiry: 06/2024</span>
+        {!showAddPayment ? (
+          <>
+            <h2>Complete Your Payment</h2>
+            <div className="payment-method">
+              <h3>Select a Payment Method</h3>
+              <div className="payment-options">
+                <button
+                  className={`payment-option-button ${selectedPaymentMethod === 'in_person' ? 'selected' : ''}`}
+                  onClick={() => handlePaymentMethodChange('in_person')}
+                >
+                  In-Person Payment
+                </button>
+                <button
+                  className={`payment-option-button ${selectedPaymentMethod === 'online' ? 'selected' : ''}`}
+                  onClick={() => handlePaymentMethodChange('online')}
+                >
+                  Online Payment
+                </button>
               </div>
-              <input
-                type="radio"
-                name="payment-method"
-                checked={selectedPaymentMethod === 'Visa'}
-                readOnly
-              />
             </div>
-            <div
-              className={`card-option ${selectedPaymentMethod === 'MasterCard' ? 'selected' : ''}`}
-              onClick={() => handlePaymentMethodChange('MasterCard')}
-            >
-              <div className="card-info">
-                <span>MasterCard ending in 5678</span>
-                <span>Expiry: 12/2025</span>
+            <div className="trip-summary">
+              <h3>Your Trip Summary</h3>
+              <p><strong>Check-In:</strong> {checkInDate ? checkInDate.toDateString() : 'N/A'}</p>
+              <p><strong>Check-Out:</strong> {checkOutDate ? checkOutDate.toDateString() : 'N/A'}</p>
+              <p><strong>Selected Rooms:</strong> {selectedRooms.map(room => room.room_number).join(', ')}</p>
+              <p><strong>Total Price:</strong> {totalPrice} JPY</p>
+            </div>
+            <div className="action-buttons">
+              <button className="confirm-button" onClick={handleConfirmPayment}>
+                Confirm & Pay {totalPrice} JPY
+              </button>
+              <button className="cancel-button" onClick={handleCancelPayment}>
+                Cancel
+              </button>
+            </div>
+            <div className="payment-notes">
+              <h3>Important Notes</h3>
+              <p>Your reservation will be confirmed upon successful payment.</p>
+              <p>Please ensure your payment details are correct before proceeding.</p>
+            </div>
+          </>
+        ) : (
+          <div className="add-payment-method">
+            <h2>Add Payment Method</h2>
+            <p>Please enter your payment details to proceed with online payment.</p>
+            <form>
+              <div className="form-group">
+                <label htmlFor="cardNumber">Card Number</label>
+                <input type="text" id="cardNumber" placeholder="Enter card number" />
               </div>
-              <input
-                type="radio"
-                name="payment-method"
-                checked={selectedPaymentMethod === 'MasterCard'}
-                readOnly
-              />
-            </div>
-            <div
-              className={`card-option ${selectedPaymentMethod === 'In-person' ? 'selected' : ''}`}
-              onClick={() => handlePaymentMethodChange('In-person')}
-            >
-              <div className="card-info">
-                <span>In-person Payment</span>
+              <div className="form-group">
+                <label htmlFor="expiryDate">Expiry Date</label>
+                <input type="text" id="expiryDate" placeholder="MM/YY" />
               </div>
-              <input
-                type="radio"
-                name="payment-method"
-                checked={selectedPaymentMethod === 'In-person'}
-                readOnly
-              />
-            </div>
+              <div className="form-group">
+                <label htmlFor="cvv">CVV</label>
+                <input type="text" id="cvv" placeholder="Enter CVV" />
+              </div>
+              <button
+                type="button"
+                className="save-button"
+                onClick={() => setShowAddPayment(false)}
+              >
+                Save Payment Method
+              </button>
+            </form>
           </div>
-          <button className="add-payment-button">Add New Payment</button>
-          <div className="policy-section">
-            <h3>Cancellation Policy</h3>
-            <p>
-              Free cancellation before Nov 30. After that, the reservation is non-refundable.{' '}
-              <a href="/">Learn more</a>
-            </p>
-          </div>
-          <div className="policy-section">
-            <h3>Ground Rules</h3>
-            <ul>
-              <li>Follow the house rules</li>
-              <li>Treat your Hoss home like your own</li>
-            </ul>
-          </div>
-        </div>
-        <div className="trip-summary">
-          <img src="your-image-url.jpg" alt="Trip Summary" className="trip-image" />
-          <div className="summary-details">
-            <h3>Your Trip Summary</h3>
-            <p>
-              <strong>Check-In:</strong> Fri, Dec 01
-            </p>
-            <p>
-              <strong>Check-Out:</strong> Tue, Dec 05
-            </p>
-            <p>
-              <strong>Guests:</strong> 4
-            </p>
-          </div>
-          <div className="pricing-breakdown">
-            <h3>Pricing Breakdown</h3>
-            <p>
-              $30 x 1 night: <span>$30</span>
-            </p>
-            <p>
-              Cleaning Fee: <span>$10</span>
-            </p>
-            <p>
-              Service Fee: <span>$5</span>
-            </p>
-            <p>
-              Total before taxes: <span>$45</span>
-            </p>
-          </div>
-          <button className="confirm-button" onClick={handleConfirmPayment}>
-            Confirm & Pay $185
-          </button>
-        </div>
+        )}
       </div>
     </div>
   );

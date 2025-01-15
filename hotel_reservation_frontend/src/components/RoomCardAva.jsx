@@ -16,7 +16,7 @@ const RoomCard = ({ room, onSelectRoom, isSelected }) => {
   return (
     <div
       className={`rom-card-ava ${isSelected ? 'selected' : ''}`}
-      onClick={() => onSelectRoom(room_number)} 
+      onClick={() => onSelectRoom(room)}
     >
       <img
         src={roomImages[room_type.toLowerCase()] || single}

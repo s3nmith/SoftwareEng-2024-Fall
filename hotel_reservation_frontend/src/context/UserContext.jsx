@@ -1,10 +1,8 @@
 import { createContext, useState } from 'react';
-import PropTypes from 'prop-types'; // Import PropTypes
+import PropTypes from 'prop-types';
 
-// Create a Context for user data
 export const UserContext = createContext();
 
-// Create a Provider component
 export const UserProvider = ({ children }) => {
   const [userId, setUserId] = useState(localStorage.getItem('user_id') || null);
 
@@ -15,7 +13,6 @@ export const UserProvider = ({ children }) => {
   );
 };
 
-// Add PropTypes validation for the children prop
 UserProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
