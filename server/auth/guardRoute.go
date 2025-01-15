@@ -6,8 +6,14 @@ import (
 	"github.com/antonlindstrom/pgstore"
 )
 
-func IsAuthorized(store *pgstore.PGStore, r *http.Request) bool {
+func IsAuthorizedAsUser(store *pgstore.PGStore, r *http.Request) (bool, string) {
 	session, _ := store.Get(r, "ubayashi-session")
-	_, ok := session.Values["email"].(string)
-	return ok
+	email, ok := session.Values["email"].(string)
+	return ok, email
+}
+
+func IsAuthorizedAsStaff(store *pgstore.PGStore, r *http.Request) (bool, string) {
+	session, _ := store.Get(r, "ubayashi-session")
+	email, ok := session.Values["staff_email"].(string)
+	return ok, email
 }
