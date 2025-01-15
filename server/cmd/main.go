@@ -63,7 +63,17 @@ func main() {
 		// If the file doesn't exist, serve index.html
 		http.ServeFile(w, r, filepath.Join(staticDir, "index.html"))
 	})
+	setupRoutes(mux, db, store)
+	// Start the server
+	port := "8080"
+	log.Printf("Starting file server on :%s...\n", port)
+	if err := http.ListenAndServe(":"+port, mux); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
+}
 
+// set up routes
+func setupRoutes(mux *http.ServeMux, db *sql.DB, store *pgstore.PGStore) {
 	//test routes
 	mux.HandleFunc("/api/message/get", getMessage)
 	mux.HandleFunc("POST /api/message/post", postMessage)
@@ -86,13 +96,9 @@ func main() {
 
 	//user routes
 	mux.HandleFunc("/api/user/reservations", user.GetAllUserReservations(db, store))
-	// Start the server
-	port := "8080"
-	log.Printf("Starting file server on :%s...\n", port)
-	if err := http.ListenAndServe(":"+port, mux); err != nil {
-		log.Fatalf("Failed to start server: %v", err)
-	}
 }
+
+// database tables
 func createTables(db *sql.DB, refresh bool) {
 	if refresh {
 		dropAllTables(db)

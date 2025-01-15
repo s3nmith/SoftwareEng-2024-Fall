@@ -15,8 +15,9 @@ func LoginUser(db *sql.DB, store *pgstore.PGStore) http.HandlerFunc {
 		password := r.FormValue("password")
 
 		var hashedPassword string
+		var userId int
 
-		err := db.QueryRow(`SELECT hashedPassword FROM "Users" WHERE email = $1`, email).Scan(&hashedPassword)
+		err := db.QueryRow(`SELECT hashedPassword,userId FROM "Users" WHERE email = $1`, email).Scan(&hashedPassword, &userId)
 		if err != nil {
 			http.Error(w, `{"error":"Invalid username or password"}`, http.StatusUnauthorized)
 			w.Header().Set("Content-Type", "application/json")
@@ -42,8 +43,9 @@ func LoginUser(db *sql.DB, store *pgstore.PGStore) http.HandlerFunc {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(map[string]string{
+		json.NewEncoder(w).Encode(map[string]any{
 			"message": "Login successful",
+			"user_id": userId,
 		})
 	}
 }
@@ -54,8 +56,9 @@ func LoginStaff(db *sql.DB, store *pgstore.PGStore) http.HandlerFunc {
 		password := r.FormValue("password")
 
 		var hashedPassword string
+		var staffId int
 
-		err := db.QueryRow(`SELECT hashedPassword FROM "Staff" WHERE email = $1`, email).Scan(&hashedPassword)
+		err := db.QueryRow(`SELECT hashedPassword,staffId FROM "Staff" WHERE email = $1`, email).Scan(&hashedPassword, &staffId)
 		if err != nil {
 			http.Error(w, `{"error":"Invalid username or password"}`, http.StatusUnauthorized)
 			w.Header().Set("Content-Type", "application/json")
@@ -81,8 +84,9 @@ func LoginStaff(db *sql.DB, store *pgstore.PGStore) http.HandlerFunc {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(map[string]string{
-			"message": "Login successful",
+		json.NewEncoder(w).Encode(map[string]any{
+			"message":  "Login successful",
+			"staff_id": staffId,
 		})
 	}
 }
