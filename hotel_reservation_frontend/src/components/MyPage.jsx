@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import '../styles/MyPage.css';
 import NavbarMinimalWithReserve from './NavbarMinimalWithReserve';
+import cheapImage from '../assets/hotel-single.jpg'; 
+import mediumImage from '../assets/hotel-deluxe.jpg'; 
+import expensiveImage from '../assets/hotel-suite.jpg'; 
 
 const MyPage = () => {
   const [reservations, setReservations] = useState([]);
@@ -20,7 +23,7 @@ const MyPage = () => {
               checkIn: new Date(reservation.checkIn_date).toLocaleDateString(),
               checkOut: new Date(reservation.checkOut_date).toLocaleDateString(),
               guests: reservation.reserved_room_numbers ? reservation.reserved_room_numbers.length : 1,
-              price: `${reservation.price} JPY`,
+              price: parseInt(reservation.price, 10),
               status: reservation.status,
             }))
           );
@@ -36,8 +39,8 @@ const MyPage = () => {
   }, []);
 
   const handleCardClick = (id) => {
-    setExpandedCard(expandedCard === id ? null : id);
-  };
+    setExpandedCard((prevExpanded) => (prevExpanded === id ? null : id));
+  };  
 
   const handleCancelReservation = (id) => {
     setReservations((prevReservations) =>
@@ -46,47 +49,71 @@ const MyPage = () => {
     alert(`Reservation ${id} has been cancelled.`);
   };
 
+  const getPriceCategoryImage = (price) => {
+    if (price <= 2000) return cheapImage;
+    if (price > 2000 && price <= 8000) return mediumImage;
+    if (price > 8000) return expensiveImage; 
+    return mediumImage;
+  };
+  
+
   return (
     <div>
       <NavbarMinimalWithReserve />
       <div className="mypage">
         <h1>My Reservations</h1>
-        <div className="reservations">
-          {reservations.map((reservation) => (
-            <div
-              className={`reservation-card ${
-                expandedCard === reservation.id ? 'expanded' : ''
-              }`}
+        {reservations.length === 0 ? (
+          <div className="no-reservations">
+            <p>Nothing to see here! Book your stay now!</p>
+            <button
+              className="book-now-button"
+              onClick={() => {
+                window.location.href = '/reservations';
+              }}
+            >
+              Book Now
+            </button>
+          </div>
+        ) : (
+          <div className="reservations">
+            {reservations.map((reservation) => (
+              <div
+              className={`reservation-card ${expandedCard === reservation.id ? 'expanded' : ''}`}
               key={reservation.id}
               onClick={() => handleCardClick(reservation.id)}
-            >
-              <div className="reservation-details">
-                <h2>{reservation.title}</h2>
-                <p>Date of Reservation: {reservation.date}</p>
-              </div>
-              <div
-                className={`expanded-details ${
-                  expandedCard === reservation.id ? 'show' : ''
-                }`}
-              >
-                <p>Check-in: {reservation.checkIn}</p>
-                <p>Check-out: {reservation.checkOut}</p>
-                <p>Guests: {reservation.guests}</p>
-                <p>Price: {reservation.price}</p>
-                <p>Status: {reservation.status}</p>
-                <button
-                  className="cancel-button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleCancelReservation(reservation.id);
-                  }}
+              >            
+                <img
+                  src={getPriceCategoryImage(reservation.price)}
+                  alt={`Room categorized by price: ${reservation.price}`}
+                  className="reservation-image"
+                />
+                <div className="reservation-details">
+                  <h2>{reservation.title}</h2>
+                  <p>Date of Reservation: {reservation.date}</p>
+                </div>
+                <div
+                  className={`expanded-details ${
+                    expandedCard === reservation.id ? 'show' : ''
+                  }`}
                 >
-                  Cancel Reservation
-                </button>
+                  <p>Check-in: {reservation.checkIn}</p>
+                  <p>Check-out: {reservation.checkOut}</p>
+                  <p>Guests: {reservation.guests}</p>
+                  <p>Price: {reservation.price} JPY</p>
+                  <button
+                    className="cancel-button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCancelReservation(reservation.id);
+                    }}
+                  >
+                    Cancel Reservation
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

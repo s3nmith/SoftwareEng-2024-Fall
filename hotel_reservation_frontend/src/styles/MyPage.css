@@ -29,17 +29,19 @@
 	transition: transform 0.3s ease, box-shadow 0.3s ease, max-height 0.3s ease;
 	overflow: hidden;
 	cursor: pointer;
-	max-height: 250px; 
+	max-height: 400px;
   }
   
   .reservation-card:hover {
-	transform: translateY(-10px); 
+	transform: translateY(-10px);
 	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 	border-color: #1f95c8;
   }
   
   .reservation-card.expanded {
-	max-height: 450px;
+	max-height: 450px; /* Adjusted height for the expanded card */
+	transform: translateY(-10px); /* Add a bit of lift for the expanded card */
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Enhanced shadow for emphasis */
   }
   
   .reservation-image {
@@ -100,10 +102,36 @@
 	background-color: #c0392b;
   }
   
-  .user-id {
+  .no-reservations {
 	text-align: center;
+	margin: 40px auto;
+	padding: 20px;
+	color: #1f95c8;
 	font-size: 1.2rem;
+	font-weight: bold;
+  }
+  
+  .no-reservations p {
 	margin-bottom: 20px;
-	color: #333;
+  }
+  
+  .book-now-button {
+	background-color: #1f95c8;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	font-size: 1rem;
+	font-weight: bold;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+  }
+  
+  .book-now-button:hover {
+	background-color: #146b8a;
+  }
+  
+  .book-now-button:active {
+	background-color: #0d4c66;
   }
   

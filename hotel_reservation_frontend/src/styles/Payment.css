@@ -1,21 +1,23 @@
 .payment-container {
 	display: flex;
 	justify-content: space-between;
-	padding: 20px;
 	font-family: 'Trebuchet MS', Arial, sans-serif;
   }
   
-  .payment-method,
-  .trip-summary {
+  .white-background {
 	background: #fff;
-	border: 1px solid #ddd;
-	border-radius: 10px;
 	padding: 20px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	width: 48%;
+	width: 60%;
   }
   
-  .payment h2, h3 {
+  .gray-background {
+	background: #f7f7f7;
+	padding: 20px;
+	width: 40%;
+  }
+  
+  .payment-method h2,
+  .trip-summary h3 {
 	color: #1f95c8;
   }
   
@@ -44,25 +46,46 @@
 	border: 2px solid #1f95c8;
   }
   
-  .card-info {
-	display: flex;
-	flex-direction: column;
+  .add-payment-method {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	font-family: 'Arial', sans-serif;
   }
   
-  .add-payment-button {
-	background: #1f95c8;
+  .add-payment-method h3 {
+	font-family: 'Trebuchet MS', Arial, sans-serif;
+	font-size: 1.5rem;
+	font-weight: bold;
+	color: #1f95c8;
+  }
+  
+  .add-payment-method label {
+	font-family: 'Roboto', sans-serif;
+	font-size: 1rem;
+	color: #333;
+  }
+  
+  .add-payment-method input {
+	font-family: 'Verdana', sans-serif;
+	font-size: 1rem;
+	color: #000;
+  }
+  
+  .save-button {
+	font-family: 'Helvetica', sans-serif;
+	font-size: 1rem;
 	color: white;
+	background-color: #1f95c8;
 	border: none;
-	padding: 10px;
-	margin-top: 15px;
-	cursor: pointer;
+	padding: 10px 15px;
 	border-radius: 5px;
-	text-align: center;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
   }
   
-  .add-payment-button:hover {
-	background: #146b8a;
-  }
+  .save-button:hover {
+	background-color: #146b8a;
+  }  
   
   .policy-section {
 	margin-top: 20px;
@@ -87,12 +110,7 @@
 	text-decoration: underline;
   }
   
-  .trip-summary {
-	display: flex;
-	flex-direction: column;
-  }
-  
-  .trip-image {
+  .trip-summary img.trip-image {
 	width: 100%;
 	border-radius: 10px;
 	margin-bottom: 15px;
@@ -103,10 +121,6 @@
 	margin: 8px 0;
 	font-size: 0.9rem;
 	color: #333;
-  }
-  
-  .pricing-breakdown {
-	margin-top: 20px;
   }
   
   .pricing-breakdown p span {
@@ -124,32 +138,34 @@
 	border-radius: 5px;
 	text-align: center;
 	font-size: 1rem;
+	width: 100%;
   }
   
   .confirm-button:hover {
 	background: #146b8a;
   }
   
-  .payment-option-button {
-	display: inline-block;
-	padding: 10px 20px;
-	margin: 10px;
-	border: 2px solid #ccc;
-	background-color: #f9f9f9;
-	color: #333;
-	font-size: 16px;
+  .cancel-button {
+	background: #ddd;
+	color: black;
+	border: none;
+	padding: 15px;
+	margin-top: 10px;
 	cursor: pointer;
 	border-radius: 5px;
-	transition: background-color 0.3s, border-color 0.3s;
+	text-align: center;
+	font-size: 1rem;
+	width: 100%;
   }
   
-  .payment-option-button:hover {
-	background-color: #e6e6e6;
+  .cancel-button:hover {
+	background: #bbb;
   }
   
-  .payment-option-button.selected {
-	background-color: #007bff;
-	color: white;
-	border-color: #0056b3;
+  .section-border {
+	border: 1px solid #ddd;
+	border-radius: 10px;
+	padding: 15px;
+	margin-bottom: 20px;
   }
   

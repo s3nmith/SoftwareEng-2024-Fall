@@ -1,59 +1,109 @@
 .admin-page {
 	padding: 20px;
-	font-family: Arial, sans-serif;
+	font-family: 'Trebuchet MS', Arial, sans-serif;
+	color: #333;
   }
   
   .admin-container {
-	max-width: 800px;
+	max-width: 1200px;
 	margin: 0 auto;
 	text-align: center;
   }
   
-  .search-bar {
+  h1 {
+	color: #1f95c8;
+	font-size: 2rem;
 	margin-bottom: 20px;
   }
   
+  .search-bar {
+	margin-bottom: 20px;
+	display: flex;
+	justify-content: center;
+  }
+  
   .search-bar input {
-	width: 100%;
-	padding: 10px;
-	font-size: 16px;
-	border: 1px solid #ccc;
+	width: 60%;
+	padding: 12px;
+	font-size: 1rem;
+	border: 1px solid #1f95c8;
 	border-radius: 5px;
+	box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+	transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .search-bar input:focus {
+	border-color: #146b8a;
+	outline: none;
+	box-shadow: 0 0 5px rgba(31, 149, 200, 0.5); 
   }
   
   .reservation-list {
-	display: flex;
-	flex-direction: column;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
 	gap: 20px;
-  }
+	justify-content: center; 
+	padding: 20px;
+  }  
   
   .reservation-card {
 	padding: 20px;
-	border: 1px solid #ddd;
-	border-radius: 5px;
-	background-color: #f9f9f9;
+	border: 1px solid #1f95c8;
+	border-radius: 10px;
+	background-color: #fff;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .reservation-card:hover {
+	transform: scale(1.05);
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
   
   .reservation-card h2 {
-	margin: 0 0 10px;
+	color: #1f95c8;
+	font-size: 1.4rem;
+	margin-bottom: 10px;
   }
   
   .reservation-card p {
-	margin: 5px 0;
+	margin: 8px 0;
+	font-size: 1rem;
+	color: #333;
   }
   
-  .check-in-button {
-	padding: 10px 20px;
-	font-size: 16px;
+  .check-in-button,
+  .check-out-button {
+	padding: 10px 15px;
+	font-size: 1rem;
 	color: #fff;
-	background-color: #007bff;
 	border: none;
 	border-radius: 5px;
 	cursor: pointer;
-	transition: background-color 0.3s;
+	transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .check-in-button {
+	background-color: #1f95c8;
   }
   
   .check-in-button:hover {
-	background-color: #0056b3;
+	background-color: #146b8a;
+	transform: scale(1.02);
+  }
+  
+  .check-out-button {
+	background-color: #ff5c5c;
+  }
+  
+  .check-out-button:hover {
+	background-color: #d9534f;
+	transform: scale(1.02);
+  }
+  
+  .no-reservations {
+	font-size: 1.2rem;
+	color: #888;
+	margin-top: 20px;
   }
   
