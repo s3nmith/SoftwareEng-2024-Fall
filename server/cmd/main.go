@@ -20,7 +20,7 @@ import (
 
 func main() {
 	// Define the directory to serve files from
-	dbConnStr := "postgres://postgres:james123@localhost:5432/postgres?sslmode=disable"
+	dbConnStr := "postgresql://software_eng_waseda_2024_user:qKdaTMWWyRdxoQRu9dnmYwDZ2mQTSfJQ@dpg-cu50j3ij1k6c73ak3gdg-a.singapore-postgres.render.com/software_eng_waseda_2024"
 	staticDir := "../../hotel_reservation_frontend/dist"
 
 	staticDir, err := filepath.Abs(staticDir)
