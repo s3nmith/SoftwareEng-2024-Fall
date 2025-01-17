@@ -42,6 +42,10 @@ func main() {
 
 	createTables(db, false)
 
+	if err := populateRooms(db); err != nil {
+		log.Fatalf("Failed to populate Rooms table: %v", err)
+	}
+
 	//set up session store
 	store, err := pgstore.NewPGStore(dbConnStr, []byte("super-secret-key"))
 	if err != nil {
