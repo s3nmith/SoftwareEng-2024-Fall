@@ -68,7 +68,7 @@ const MyPage = () => {
             <button
               className="book-now-button"
               onClick={() => {
-                window.location.href = '/reservations';
+                window.location.href = '/reserve';
               }}
             >
               Book Now
@@ -89,15 +89,14 @@ const MyPage = () => {
                 />
                 <div className="reservation-details">
                   <h2>{reservation.title}</h2>
-                  <p>Date of Reservation: {reservation.date}</p>
+                  <p>Date of Arrival: {reservation.checkIn}</p>
                 </div>
                 <div
                   className={`expanded-details ${
                     expandedCard === reservation.id ? 'show' : ''
                   }`}
                 >
-                  <p>Check-in: {reservation.checkIn}</p>
-                  <p>Check-out: {reservation.checkOut}</p>
+                  <p>Date of Departure: {reservation.checkOut}</p>
                   <p>Guests: {reservation.guests}</p>
                   <p>Price: {reservation.price} JPY</p>
                   <button
